@@ -690,14 +690,14 @@ local keybindHeight = height
                          
                         draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
-                        draw.Text( 270 + x1, 175 + y2, fakelagms.."ms" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
                     elseif gui.GetValue( "fake lag" ) >= 0 and gui.GetValue( "fake lag key") == 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 175 + y2, "fake lag" )
                         draw.Text( 185 + x1, 175 + y2, "none" )
                   
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
-                        draw.Text( 270 + x1, 175 + y2, fakelagms.."ms" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
                     elseif gui.GetValue( "fake lag" ) >= 1 and gui.GetValue( "fake lag key") >= 0 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, 175 + y2, "fake lag" )
@@ -705,14 +705,14 @@ local keybindHeight = height
                          
                         draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
-                        draw.Text( 270 + x1, 175 + y2, fakelagms.."ms" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
                     else
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 175 + y2, "fake lag" )
                         draw.Text( 185 + x1, 175 + y2, fakelag_key )
                          
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
-                        draw.Text( 270 + x1, 175 + y2, fakelagms.."ms" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
                     end
                       
                 else
