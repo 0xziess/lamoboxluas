@@ -1,4 +1,5 @@
-![image](https://github.com/0xziess/lamoboxluas/assets/87069136/0a6e16b0-2cc7-444b-892a-ff19de9a3eb8)
+![image](https://github.com/0xziess/lamoboxluas/assets/87069136/c6ef5be6-0f1a-45da-aa07-1f53a87e8eb5)
+
 
 credits to muqa and lnx
 
