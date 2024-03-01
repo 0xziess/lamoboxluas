@@ -1,25 +1,38 @@
-local Menu = { -- the config table
+--> creds to muqa for this cool menu and functions https://github.com/Muqa1/Muqa-LBOX-pastas/blob/main/Release%20misc%20tools.lua | creds to LNX for the rounded corners from this menu https://github.com/lnx00/Lmaobox-Lua/blob/main/src/PoC/WinUI.lua
+local menu = {
+    x = 500,
+    y = 500,
 
-    colors = { 
-        -- Local = {},
-        all = {194,83,83},
-        keybinde = {41, 42, 46},
-        dtber = {255, 134, 42},
+    w = 405,
+    h = 365,
+
+    rX = 0,
+    rY = 0,
+
+    rX2 = 0,
+    rY2 = 0,
+
+    tabs = {
+        tab_1 = true,
+        tab_2 = false,
+        tab_3 = false,
+        tab_4 = false,
     },
 
-    tabs = { 
-        main = true, 
+    buttons = {
+        main = false,
         colors = false,
         keybinds = false,
-        config = false,
+        cfg = false,
+
+        cfg_load = false,
+        cfg_save = false,
     },
 
-    main_tab = {
-        keybinds = true,
-        dtbar = true,
-    },
+    toggles = {
+        keybinde_menu = true,
+        nitro_dt_bar = true,
 
-    keybinde_tab = {
         aimbot = true,
         crits = true,
         dtky = true,
@@ -29,36 +42,39 @@ local Menu = { -- the config table
         werp = true,
         triggerbt = true,
         triggersht = true,
+
     },
 
-    colors_tab = {
-        colors = {"ON Color", "Keybind Menu", "DT Bar"},
-        selected_color = 1,
-    }
+    colors = { 
+
+        all = 194,
+        all2 = 83,
+        all3 = 83,
+
+        dtbarcolr = 255,
+        dtbarcolr2 = 134,
+        dtbarcolr3 = 42,
+
+        bgcolr = 41,
+        bgcolr2 = 42,
+        bgcolr3 = 46,
+    },
 }
-
-------- STUFF TO LOAD THE BAR AND THE KEYBINDS
-
-
-
 
 local title = draw.CreateFont( "Roboto Medium", 23, 500 )
 local binds = draw.CreateFont( "Arial", 18, 1000 )
 
 
-
-
 local textcolorwhenoff = {120, 120, 120, 250}
 
 local nitrofont = draw.CreateFont('Verdana', 15, 1000, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
-local nitrofont2 = draw.CreateFont('Tahoma', 16, 1000, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE | FONTFLAG_ANTIALIAS)
+local nitrofont2 = draw.CreateFont('Tahoma', 16, 1000, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 
-local barWidth = 115 -- dont touch this
-local barHeight = 9 -- change this to make the bar bigger
+local barWidth = 115
+local barHeight = 9 -- change this to make the dt bar bigger
 local minTicks = 1
 local maxTicks = 23
 local barOffset = 45
-
 
 
 
@@ -163,50 +179,324 @@ local function GetInteraction(x1, y1, x2, y2, id)
   return hovered, clicked, active
 end
 
--- Draw a horizontal rectangle with rounded corners left and right
-local function RoundedRectH(x1, y1, x2, y2)
-    if not Style.Circles then
-        draw.FilledRect(x1, y1, x2, y2)
-        return
-    end
 
-    local r = (y2 - y1) // 2
-    DrawCircle(x1 + r, y1 + r, r)
-    DrawCircle(x2 - r, y1 + r, r)
-    draw.FilledRect(x1 + r, y1, x2 - r, y2)
+local tahoma = draw.CreateFont( "Tahoma", 12, 400, FONTFLAG_OUTLINE )
+local tahoma2 = draw.CreateFont( "Tahoma", 12, 400)
+local tahoma_bold = draw.CreateFont( "Tahoma", 12, 800, FONTFLAG_OUTLINE )
+
+local f = math.floor
+
+local function GetPressedKey()
+    for i = 1, 113 do 
+        if input.IsButtonPressed( i ) then
+            if i ~= 107 then 
+                return i
+            end
+        end
+    end
 end
 
+local function IsMouseInBounds(x,y,x2,y2)
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+    if mX >= x and mX <= x2 and mY >= y and mY <= y2 then
+        return true 
+    end
+    return false
+end
 
+local function TextInCenter(x,y,x2,y2,string)
+    local w, h = draw.GetTextSize(string)
+    local width, height = x2-x, y2-y
+    draw.Text(math.floor(x+(width/2)-(w/2)), math.floor(y+(height/2)-(h/2)), string)
+end
 
+local Toggles = {}
+local function Toggle(x, y, name, toggle_bool)
+    local w, h = draw.GetTextSize(name)
+    local pos = {x, y, x + 20, y + 20}
+    if Toggles[toggle_bool] == nil then
+        table.insert(Toggles, toggle_bool)
+    end
+    local clr = {10, 10, 10, 50}
+    if IsMouseInBounds(table.unpack(pos)) and input.IsButtonPressed(MOUSE_LEFT) then
+        local currentTime = globals.RealTime()
+        if currentTime - (Toggles[toggle_bool] or 0) >= 0.1 then
+            menu.toggles[toggle_bool] = not menu.toggles[toggle_bool]
+            Toggles[toggle_bool] = currentTime
+        end
+        clr = {40, 40, 40, 50}
+    end
+    draw.Color(table.unpack(clr))
+    draw.FilledRect(table.unpack(pos))
+    draw.Color(80, 80, 80, 255)
+    draw.OutlinedRect(table.unpack(pos))
+    draw.Color(255, 255, 255, 255)
+    draw.Text(pos[3]+5,y+f(h/4), name)
+    if menu.toggles[toggle_bool] == true then
+        draw.Color(60, 60, 60, 255)
+        draw.FilledRect(pos[1] + 5, pos[2] + 5, pos[3] - 5, pos[4] - 5)
+    end
+end
 
-local menuLoaded, ImMenu = pcall(require, "ImMenu")
-assert(menuLoaded, "ImMenu not found, please install it!")
-assert(ImMenu.GetVersion() >= 0.66, "ImMenu version is too old, please update it!")
+local function Island(x,y,x2,y2, name)
+    local r,g,b = 53,126,53
+    draw.Color(10, 10, 10, 50)
+    draw.FilledRect(x,y,x2,y2)
+    draw.Color( r,g,b,125 )
+    draw.OutlinedRect(x, y, x2, y2)
+    draw.Color( r,g,b,40 )
+    draw.FilledRect(x, y - 15, x2, y)
+    draw.Color( r,g,b,125 )
+    draw.OutlinedRect(x, y - 15, x2, y)
+    draw.Color( 255,255,255,255 )
+    local w,h = draw.GetTextSize(name)
+    draw.Text(math.floor(x+((x2-x)/2)-(w/2)), math.floor(y-14), name )
+end
+
+local function Slider(x,y,x2,y2, sliderValue ,min,max, name)
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+    local value = menu.colors[sliderValue]
+    if IsMouseInBounds(x,y - 5,x2,y2 + 5) and input.IsButtonDown(MOUSE_LEFT) then 
+        function clamp(value, min, max) -- math.clamp was causing errors :shrug:
+            return math.max(min, math.min(max, value))
+        end
+        local percent = clamp((mX - x) / (x2-x), 0, 1)
+        local value2 = math.floor((min + (max - min) * percent))
+        menu.colors[sliderValue] = value2
+    end
+    draw.Color(40,40,40,255)
+    draw.OutlinedRect(x,y,x2,y2)
+    draw.Color(10,10,10,50)
+    draw.FilledRect(x,y,x2,y2)
+    local r,g,b = 53,126,53
+    draw.Color( r,g,b,40 )
+    local sliderWidth = math.floor((x2-x) * (value - min) / (max - min))
+    local pos = {x, y, x + sliderWidth, y2}
+    draw.FilledRect(table.unpack(pos))
+    draw.Color( r,g,b,255 )
+    draw.OutlinedRect(table.unpack(pos))
+    draw.Color(255,255,255,255)
+    local w,h = draw.GetTextSize( value )
+    draw.Text(x2-w, pos[2]-h, value)
+    w,h = draw.GetTextSize( name )
+    draw.Text(x, pos[2]-h, name)
+end
+
+local function CFGbutton(x,y,x2,y2,name,button)
+    
+    local clr = {53,126,53}
+    if IsMouseInBounds(x,y,x2,y2) and input.IsButtonPressed(MOUSE_LEFT) then 
+        clr = {175, 175, 175}
+        menu.buttons[button] = true
+    else
+        menu.buttons[button] = false
+    end
+    draw.Color( clr[1],clr[2],clr[3],40 )
+    draw.FilledRect(x, y, x2, y2)
+    draw.Color( clr[1],clr[2],clr[3],125 )
+    draw.OutlinedRect(x, y, x2, y2)
+    local w,h = draw.GetTextSize(name)
+    draw.Color( 255,255,255,255 )
+    draw.Text(math.floor(x+((x2-x)/2)-(w/2)), math.floor(y+(h*0.1)),name)
+end
+
+local function NotificationBox(x,y,string,alphaProcent)
+    local r,g,b = 53,126,53
+    string = "Notification: ".. string
+    local w,h = draw.GetTextSize(string)
+    local padding = 5
+    draw.Color(r,g,b,f(50*alphaProcent))
+    draw.FilledRect(x-padding,y-padding,x+w+padding,y+h+padding)
+    draw.Color(r, g, b, f(255*alphaProcent))
+    draw.OutlinedRect(x-padding, y-padding, x+w+padding,y+h+padding)
+    draw.Color(255,255,255,f(255*alphaProcent))
+    draw.Text(x,y,string)
+end
+
+local notifications = {} 
 
 local lastToggleTime = 0
 local Lbox_Menu_Open = true
 local function toggleMenu()
     local currentTime = globals.RealTime()
     if currentTime - lastToggleTime >= 0.1 then
-        if Lbox_Menu_Open == false then
-            Lbox_Menu_Open = true
-        elseif Lbox_Menu_Open == true then
-            Lbox_Menu_Open = false
-        end
+        Lbox_Menu_Open = not Lbox_Menu_Open
         lastToggleTime = currentTime
     end
 end
 
-local s_width, s_height = draw.GetScreenSize()
+local IsDragging = false
+local IsDragging2 = false
+local IsDragging3 = false
+local IsDraggingDMGLOG = false
 
-local function ColorCalculator(index) -- best name
-    local colors = {
-        [1] = Menu.colors.all,
-        [2] = Menu.colors.keybinde,
-        [3] = Menu.colors.dtber,
-    }
-    return colors[index]
+local buttons = {
+    [1] = {name="Main", table="antiaim"},
+    [2] = {name="Colors", table="visuals"},
+}
+
+local function DrawMenu()
+    if not Lbox_Menu_Open then return end
+    draw.SetFont( tahoma )
+
+    local x, y = menu.x, menu.y
+    local bW, bH = menu.w, menu.h
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+    
+    if IsDragging2 then
+        if input.IsButtonDown(MOUSE_LEFT) then
+            menu.x = mX - math.floor(bW * menu.rX)
+            menu.y = mY - math.floor(15 * menu.rY)
+        else
+            IsDragging2 = false
+        end
+    else
+        if IsMouseInBounds(x, y - 15, x + bW, y) then
+            if not input.IsButtonDown(MOUSE_LEFT) then
+                menu.rX = ((mX - x) / bW)
+                menu.rY = ((mY - y) / 15)
+            else
+                menu.x = mX - math.floor(bW * menu.rX)
+                menu.y = mY - math.floor(15 * menu.rY)
+                IsDragging2 = true
+            end
+        end
+    end
+    
+    
+
+
+    draw.Color( 30, 30, 30, 255 )
+    draw.FilledRect(x, y, x + bW, y + bH) -- main backround
+
+    draw.Color( 53,126,53, 255 )
+    draw.OutlinedRect(x, y - 15, x + bW, y + bH) -- outline to the main menu
+    draw.OutlinedRect(x, y - 15, x + bW, y) -- outline of blue bar
+
+    draw.Color( 53,126,53,125 )
+    draw.FilledRect(x, y - 15, x + bW, y) -- blue bar
+
+    local string = "misc tools test"
+    local w, h = draw.GetTextSize(string)
+    draw.Color(255, 255, 255, 255)
+    --draw.Text(math.floor(x+(bW/2)-(w/2)), math.floor(y-h), string) -- name
+    TextInCenter(x, y - 15, x + bW, y, string)
+
+    draw.Color(255,255,255,200)
+    local time = os.date("%H:%M")
+    w,h = draw.GetTextSize(time)
+    draw.Text(x+bW-w-2,y-h,time)
+
+
+    -- button  
+    local startY = 0
+    for i = 1, #buttons do 
+        local button = buttons[i]
+        local w, h = draw.GetTextSize(button.name)
+        local pos = {x+5, y+startY+5, x+85, y+startY+25}
+        local clr = {10, 10, 10, 50}
+        
+        -- Check if the mouse is inside the button bounds and the left mouse button is pressed
+        if IsMouseInBounds(table.unpack(pos)) and input.IsButtonPressed(MOUSE_LEFT) then 
+            clr = {40, 40, 40, 50}
+            -- Toggle the button state in the menu.buttons table
+            menu.buttons[button.table] = true
+        else
+            menu.buttons[button.table] = false
+        end
+        
+        draw.Color(table.unpack(clr))
+        draw.FilledRect(table.unpack(pos))
+        draw.Color(53,126,53, 40)--45, 45, 45, 255
+        draw.OutlinedRect(table.unpack(pos))
+        draw.Color(255, 255, 255, 255)
+        TextInCenter(pos[1], pos[2], pos[3], pos[4], button.name)
+        startY = startY + 25
+    end
+
+    if menu.buttons.antiaim then 
+        menu.tabs.tab_1=true
+        menu.tabs.tab_2=false
+        menu.tabs.tab_3=false
+        menu.tabs.tab_4=false
+    end
+    if menu.buttons.visuals then 
+        menu.tabs.tab_1=false
+        menu.tabs.tab_2=true
+        menu.tabs.tab_3=false
+        menu.tabs.tab_4=false
+    end
+    if menu.buttons.misc then 
+        menu.tabs.tab_1=false
+        menu.tabs.tab_2=false
+        menu.tabs.tab_3=true
+        menu.tabs.tab_4=false
+    end
+
+    draw.Color(45, 45, 45, 255)
+    draw.Line(x+90,y+1, x+90, y+bH-1)
+
+    draw.Color(200, 200, 200, 50)
+    draw.Text(x+5, y+bH-35, "Config")
+    CFGbutton(x+5, y+bH-20,x+46, y+bH-5,"Load", "cfg_load")
+    CFGbutton(x+48, y+bH-20,x+87, y+bH-5,"Save", "cfg_save")
+    x = x + 90
+    if menu.tabs.tab_1 then
+        menu.w = 300
+        menu.h = 200
+        local x1,y1 = x+5, y+20
+
+        Island(x1,y1,x1+150,y1+130,"Features")
+        Toggle(x1+5, y1+5,"Nitro Keybinds", "keybinde_menu")
+        Toggle(x1+5, y1+35,"Nitro DT Bar", "nitro_dt_bar")
+
+        
+        
+
+    end
+
+    if menu.tabs.tab_2 then
+        menu.w = 450
+        menu.h = 250
+        local x1,y1 = x+5, y+20
+
+        Island(x1 + 5,y1,x1+150,y1+100,"Keybinds toggled ON + Line")
+        Slider(x1+10,y1+25,x1+140,y1+35, "all" ,0,255, "Red")
+        Slider(x1+10,y1+55,x1+140,y1+65, "all2" ,0,255, "Green")
+        Slider(x1+10,y1+85,x1+140,y1+95, "all3" ,0,255, "Blue")
+
+        Island(x1+175,y1,x1+320,y1+100,"DT Bar")
+        Slider(x1+180,y1+25,x1+310,y1+35, "dtbarcolr" ,0,255, "Red")
+        Slider(x1+180,y1+55,x1+310,y1+65, "dtbarcolr2" ,0,255, "Green")
+        Slider(x1+180,y1+85,x1+310,y1+95, "dtbarcolr3" ,0,255, "Blue")
+
+        Island(x1+85,y1+125,x1+250,y1+225,"Keybinds Background")
+        Slider(x1+90,y1+150,x1+240,y1+160, "bgcolr" ,0,255, "Red")
+        Slider(x1+90,y1+180,x1+240,y1+190, "bgcolr2" ,0,255, "Green")
+        Slider(x1+90,y1+210,x1+240,y1+220, "bgcolr3" ,0,255, "Blue")
+
+        
+    end
+
+    if menu.tabs.tab_3 then
+        menu.w = 415
+        menu.h = 360
+        local x1,y1 = x+5, y+20
+
+        Island(x1,y1,x1+150,y1+55,"Crosshair Indicators")
+        Toggle(x1+5, y1+5,"Enable", "crosshair_indicators")
+
+        y1 = y1+50
+        Island(x1,y1,x1+150,y1+55,"Damage Logger")
+        Toggle(x1+5, y1+5,"Enable", "dmg_logger")
+        Toggle(x1+5, y1+30,"Custom Position", "dmg_logger_custom_pos")
+
+
+
+    end
 end
+callbacks.Unregister( "Draw", "awftgybhdunjmiko")
+callbacks.Register( "Draw", "awftgybhdunjmiko", DrawMenu )
 
 
 
@@ -241,7 +531,6 @@ local function CreateCFG(folder_name, table)
         local serializedConfig = serializeTable(table)
         file:write(serializedConfig)
         file:close()
-        printc( 255, 183, 0, 255, "["..os.date("%H:%M:%S").."] Saved to ".. tostring(fullPath))
     end
 end
 
@@ -255,7 +544,6 @@ local function LoadCFG(folder_name)
         file:close()
         local chunk, err = load("return " .. content)
         if chunk then
-            printc( 0, 255, 140, 255, "["..os.date("%H:%M:%S").."] Loaded from ".. tostring(fullPath))
             return chunk()
         else
             print("Error loading configuration:", err)
@@ -263,13 +551,25 @@ local function LoadCFG(folder_name)
     end
 end
 
+
+
+local logs = {}
+
+
+local sW,sH = draw.GetScreenSize()
+
 local screenX, screenY = draw.GetScreenSize()
 local barX = math.floor(screenX / 2 - barWidth / 2)
 local barY = math.floor(screenY / 2) + barOffset
-local x1, y1, width, height = 50, 980, 310, 260
+local x1, y1, width, height = 50, 980, 310, 280
 local moving = false
 local moving1 = false
-callbacks.Register( "Draw", "NITRO CUSTOMIZABLE", function()
+local IsDragging2 = false
+
+local function NonMenuDraw()
+    if input.IsButtonPressed( KEY_END ) or input.IsButtonPressed( KEY_INSERT ) or input.IsButtonPressed( KEY_F11 ) then 
+        toggleMenu()
+    end
 
     local keybindslist = {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -313,193 +613,168 @@ callbacks.Register( "Draw", "NITRO CUSTOMIZABLE", function()
     local trigger_key = keybindslist[gui.GetValue( "trigger key" )]
 
     local triggershoot_key = keybindslist[gui.GetValue( "trigger shoot key" )]
-    
-    if input.IsButtonPressed( KEY_END ) or input.IsButtonPressed( KEY_INSERT ) or input.IsButtonPressed( KEY_F11 ) then 
-        toggleMenu() 
+
+    local warp_key = keybindslist[gui.GetValue( "dash move key" )]
+
+    draw.SetFont(tahoma_bold)
+
+    local notif_startY = 0
+    local time = 4
+    local currentTime = globals.CurTime()
+    local seenNotifications = {}
+    for i = #notifications, 1, -1 do 
+        local notif = notifications[i]
+        local logTime = notif.time or currentTime
+        local elapsedTime = currentTime - logTime
+        if not seenNotifications[notif.text] then
+            if elapsedTime >= time then
+                table.remove(notifications, i)
+            else
+                NotificationBox(10, 10 + notif_startY, notif.text, 1 - (elapsedTime / time))
+                notif_startY = notif_startY + 30
+            end
+            seenNotifications[notif.text] = true
+        else
+            table.remove(notifications, i)
+        end
     end
+    
 
-    if Lbox_Menu_Open == true and ImMenu.Begin("Customizable Nitro Thing", true) then -- managing the menu
+    if menu.buttons.cfg_save then 
+        CreateCFG([[MiscToolsLua]], menu)
+        table.insert(notifications, 1, {time = globals.CurTime(), text = "Saved Config!"})
+    end
+    
 
-        ImMenu.BeginFrame(1) -- tabs
-
-        if ImMenu.Button("Main") then
-            Menu.tabs.main = true
-            Menu.tabs.colors = false
-            Menu.tabs.keybinds = false
-            Menu.tabs.config = false
-        end
-
-        if ImMenu.Button("Colors") then
-            Menu.tabs.main = false
-            Menu.tabs.colors = true
-            Menu.tabs.keybinds = false
-            Menu.tabs.config = false
-        end
-
-        if ImMenu.Button("Keybinds") then
-            Menu.tabs.main = false
-            Menu.tabs.colors = false
-            Menu.tabs.keybinds = true
-            Menu.tabs.config = false
-        end
-
-        if ImMenu.Button("Config") then
-            Menu.tabs.main = false
-            Menu.tabs.colors = false
-            Menu.tabs.keybinds = false
-            Menu.tabs.config = true
-        end
-
-        ImMenu.EndFrame()
-
-
-        if Menu.tabs.main then 
-
-            ImMenu.BeginFrame(1)
-            Menu.main_tab.keybinds =  ImMenu.Checkbox("Keybinds", Menu.main_tab.keybinds)
-            Menu.main_tab.dtbar =  ImMenu.Checkbox("DT Bar", Menu.main_tab.dtbar)
-            ImMenu.EndFrame()
-
-        end
-
-      
-
-        if Menu.tabs.colors then
-
-            ImMenu.BeginFrame(1)
-            ImMenu.Text("Selected Part")
-            Menu.colors_tab.selected_color = ImMenu.Option(Menu.colors_tab.selected_color, Menu.colors_tab.colors)
-            ImMenu.EndFrame()
-
-            ImMenu.BeginFrame(1)
-            ColorCalculator(Menu.colors_tab.selected_color)[1] = ImMenu.Slider("Red", ColorCalculator(Menu.colors_tab.selected_color)[1] , 0, 255)
-            ImMenu.EndFrame()
-            ImMenu.BeginFrame(1)
-            ColorCalculator(Menu.colors_tab.selected_color)[2] = ImMenu.Slider("Green", ColorCalculator(Menu.colors_tab.selected_color)[2] , 0, 255)
-            ImMenu.EndFrame()
-            ImMenu.BeginFrame(1)
-            ColorCalculator(Menu.colors_tab.selected_color)[3] = ImMenu.Slider("Blue", ColorCalculator(Menu.colors_tab.selected_color)[3] , 0, 255)
-            ImMenu.EndFrame()
-        end
-
-        if Menu.tabs.keybinds then 
-
-            ImMenu.BeginFrame(1)
-            Menu.keybinde_tab.aimbot =  ImMenu.Checkbox("Aimbot", Menu.keybinde_tab.aimbot)
-            Menu.keybinde_tab.crits =  ImMenu.Checkbox("Crits", Menu.keybinde_tab.crits)
-            Menu.keybinde_tab.dtky =  ImMenu.Checkbox("DT", Menu.keybinde_tab.dtky)
-            ImMenu.EndFrame()
-
-            ImMenu.BeginFrame(1)
-            Menu.keybinde_tab.rechrge =  ImMenu.Checkbox("Recharge DT", Menu.keybinde_tab.rechrge)
-            Menu.keybinde_tab.thrdperson =  ImMenu.Checkbox("Thirdperson", Menu.keybinde_tab.thrdperson)
-            Menu.keybinde_tab.fakeleg =  ImMenu.Checkbox("Fake Lag", Menu.keybinde_tab.fakeleg)
-            ImMenu.EndFrame()
-
-            ImMenu.BeginFrame(1)
-            Menu.keybinde_tab.triggerbt =  ImMenu.Checkbox("Trigger Bot", Menu.keybinde_tab.triggerbt)
-            Menu.keybinde_tab.triggersht =  ImMenu.Checkbox("Trigger Shoot", Menu.keybinde_tab.triggersht)
-            ImMenu.EndFrame()
-
-        end
-
-        if Menu.tabs.config then 
-            ImMenu.BeginFrame(1)
-            if ImMenu.Button("Create/Save CFG") then
-                CreateCFG( [[nitro custom]] , Menu )
-            end
-
-            if ImMenu.Button("Load CFG") then
-                Menu = LoadCFG( [[nitro custom]] )
-            end
-
-            ImMenu.EndFrame()
-
-            ImMenu.BeginFrame(1)
-            ImMenu.Text("Dont load a config if you havent saved one.")
-            ImMenu.EndFrame()
-        end
-
-        ImMenu.End()
+    if menu.buttons.cfg_load then 
+        menu = LoadCFG([[MiscToolsLua]])
+        table.insert(notifications, 1, {time = globals.CurTime(), text = "Loaded Config!"})
     end
 
     
 
+    local keybindHeight = height
+    local keybindWidth = width
+
     
 
-local customcolor = nil
-local end_bar_color = nil
-local dtbarcolr = nil
+    if menu.toggles.keybinde_menu then
 
-customcolor = Menu.colors.all -- ui color
-end_bar_color = Menu.colors.keybinde -- transparent bar
-dtbarcolr = Menu.colors.dtber
-
-local keybindHeight = height
-
-
-
-        if Menu.keybinde_tab.aimbot == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.crits == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.dtky == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.rechrge == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.thrdperson == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.fakeleg == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.triggerbt == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.keybinde_tab.triggersht == false then
-            keybindHeight = keybindHeight - 25
-        end
-
-        if Menu.main_tab.keybinds then 
-
-        local function drawBox()
             if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                 return
               end
-              if Lbox_Menu_Open == true then
-                draw.Color( 255, 255, 255, 255 )
-                draw.OutlinedRect( posX - 12, posY - 12, posX + width + 12, posY + keybindHeight + 12 )
-            else
-            end
-            
-    
-              local uitransparency1 = Menu.main_tab.uitransparency
 
+              if Lbox_Menu_Open == false then
+
+                if menu.toggles.aimbot == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.crits == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.dtky == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.rechrge == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.thrdperson == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.fakeleg == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.triggerbt == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+                if menu.toggles.triggersht == false then
+                    keybindHeight = keybindHeight - 25
+                end
+
+                if menu.toggles.werp == false then
+                    keybindHeight = keybindHeight - 25
+                end
+            
+              end
             
                 draw.SetFont(title)
-                draw.Color( end_bar_color[1], end_bar_color[2], end_bar_color[3], 255 )
+                draw.Color( menu.colors.bgcolr, menu.colors.bgcolr2, menu.colors.bgcolr3, 255 )
                 RoundedRect(posX, posY, posX + width, posY + keybindHeight, 6)
             
                 draw.Color( 255, 255, 255, 255 )
                 draw.Text( 20 + posX, 10 + posY, "Binds" )
                 
-                draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                 RoundedRect(posX + 15, posY + 35, posX + width - 10, posY + 210 - 172, 0)
+
+                if Lbox_Menu_Open == true then
+                    draw.Color( 255, 255, 255, 255 )
+                    draw.OutlinedRect( posX - 12, posY - 12, posX + width + 55, posY + keybindHeight + 12 )
+
+                    local x, y = x1, y1
+                    local bW, bH = width, height
+                    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+                    
+                    if IsDragging then
+                        if input.IsButtonDown(MOUSE_LEFT) then
+                            x1 = mX - math.floor(bW * menu.rX)
+                            y1 = mY - math.floor(15 * menu.rY)
+                        else
+                            IsDragging = false
+                        end
+                    else
+                        if IsMouseInBounds(x, y, x + bW, y + bH) then
+                            if not input.IsButtonDown(MOUSE_LEFT) then
+                                menu.rX = ((mX - x) / bW)
+                                menu.rY = ((mY - y) / 15)
+                            else
+                                x1 = mX - math.floor(bW * menu.rX)
+                                y1 = mY - math.floor(15 * menu.rY)
+                                IsDragging = true
+                            end
+                        end
+                    end
+
+                    
+                    draw.SetFont(title)
+                    draw.Color( menu.colors.bgcolr, menu.colors.bgcolr2, menu.colors.bgcolr3, 255 )
+                    RoundedRect(posX, posY, posX + width + 45, posY + keybindHeight, 6)
+            
+                    draw.Color( 255, 255, 255, 255 )
+                    draw.Text( 20 + posX, 10 + posY, "Binds" )
+                
+                    draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                    RoundedRect(posX + 15, posY + 35, posX + width + 25, posY + 210 - 172, 0)
+
+                    Toggle(320 + x1, y2 + 48,"", "aimbot")
+                    Toggle(320 + x1, y2 + 73,"", "crits")
+                    Toggle(320 + x1, y2 + 98,"", "dtky")
+                    Toggle(320 + x1, y2 + 123,"", "rechrge")
+                    Toggle(320 + x1, y2 + 148,"", "thrdperson")
+                    Toggle(320 + x1, y2 + 173,"", "fakeleg")
+                    Toggle(320 + x1, y2 + 198,"", "triggerbt")
+                    Toggle(320 + x1, y2 + 223,"", "triggersht")
+                    Toggle(320 + x1, y2 + 248,"", "werp")
+
+                    
+
+                else
+                end 
+
+                
             
                 draw.SetFont(binds)
 
-                if Menu.keybinde_tab.aimbot then
+            if Lbox_Menu_Open == true then
+                
+               
 
             
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
@@ -515,7 +790,7 @@ local keybindHeight = height
                       draw.Text( 85 + x1, y2 + 50, "aimbot")
                       draw.Text( 185 + x1, y2 + 50, aimbot_key )
                 
-                      draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                       draw.Text( 25 + x1, y2 + 50, "Hold" )
                       draw.Text( 270 + x1, y2 + 50, "On" )
                 
@@ -524,7 +799,324 @@ local keybindHeight = height
                       draw.Text( 85 + x1, y2 + 50, "aimbot")
                       draw.Text( 185 + x1, y2 + 50, aimbot_key )
                 
-                      draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                      draw.Text( 270 + x1, y2 + 50, "On" )
+                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
+                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                      draw.Text( 85 + x1, y2 + 50, "aimbot")
+                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                
+                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                      draw.Text( 270 + x1, y2 + 50, "Off" )
+                    else
+                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                      draw.Text( 85 + x1, y2 + 50, "aimbot" )
+                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                
+                      draw.Text( 25 + x1, y2 + 50, "Hold" )
+                      draw.Text( 270 + x1, y2 + 50, "Off" )
+                    end
+        
+                   
+        
+               
+        
+                
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    
+                    if (input.IsButtonDown( gui.GetValue( "crit hack key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 75, "force crits" )
+                        draw.Text( 185 + x1, y2 + 75, force_crits_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 75, "Hold" )
+                        draw.Text( 270 + x1, y2 + 75, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 75, "force crits" )
+                        draw.Text( 185 + x1, y2 + 75, force_crits_key )
+                  
+                        draw.Text( 25 + x1, y2 + 75, "Hold" )
+                        draw.Text( 270 + x1, y2 + 75, "Off" )
+                      end
+                
+        
+                
+        
+        
+               
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    
+                    if (input.IsButtonDown( gui.GetValue( "double tap key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "Off" )
+                      end
+        
+                      
+                
+                
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    
+                    if (input.IsButtonDown( gui.GetValue( "force recharge key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 125 + y2, "recharge dt" )
+                        draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
+                        
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 125 + y2, "Hold" )
+                        draw.Text( 270 + x1, 125 + y2, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 125 + y2, "recharge dt" )
+                        draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
+                  
+                        draw.Text( 25 + x1, 125 + y2, "Hold" )
+                        draw.Text( 270 + x1, 125 + y2, "Off" )
+                      end
+        
+                      
+                
+                
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    
+                    if gui.GetValue( "thirdperson" ) == 1 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, thirdperson_key  )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, thirdperson_key )
+                  
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "Off" )
+                      end
+        
+                      
+                
+        
+                
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    local keystatetext = "none";
+                    
+                    if gui.GetValue( "fake lag" ) >= 1 and gui.GetValue( "fake lag key") == 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 175 + y2, "fake lag" )
+                        draw.Text( 185 + x1, 175 + y2, "none" )
+                         
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 175 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
+                    elseif gui.GetValue( "fake lag" ) >= 0 and gui.GetValue( "fake lag key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 175 + y2, "fake lag" )
+                        draw.Text( 185 + x1, 175 + y2, "none" )
+                  
+                        draw.Text( 25 + x1, 175 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
+                    elseif gui.GetValue( "fake lag" ) >= 1 and gui.GetValue( "fake lag key") >= 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 175 + y2, "fake lag" )
+                        draw.Text( 185 + x1, 175 + y2, fakelag_key )
+                         
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 175 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
+                    else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 175 + y2, "fake lag" )
+                        draw.Text( 185 + x1, 175 + y2, fakelag_key )
+                         
+                        draw.Text( 25 + x1, 175 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 175 + y2, fakelagms )
+                    end
+                      
+                
+
+                
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    local keystatetext = "none";
+                    
+                    if gui.GetValue( "trigger key") == 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 200 + y2, "trigger bot" )
+                        draw.Text( 185 + x1, 200 + y2, "always on" )
+                         
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 200 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 200 + y2, "On" )
+                    elseif gui.GetValue( "trigger key", trigger_key) and (input.IsButtonDown( gui.GetValue( "trigger key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 200 + y2, "trigger bot" )
+                        draw.Text( 185 + x1, 200 + y2, trigger_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 200 + y2, "Hold" )
+                        draw.Text( 270 + x1, 200 + y2, "On" )
+                    else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 200 + y2, "trigger bot" )
+                        draw.Text( 185 + x1, 200 + y2, trigger_key )
+                  
+                        draw.Text( 25 + x1, 200 + y2, "Hold" )
+                        draw.Text( 270 + x1, 200 + y2, "Off" )
+                    end
+
+                      
+                
+
+               
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    local keystatetext = "none";
+                    
+                    if gui.GetValue( "trigger shoot") == 1 and gui.GetValue( "trigger shoot key" ) == 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
+                        draw.Text( 185 + x1, 225 + y2, "none" )
+                         
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 225 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 225 + y2, "On" )
+                    elseif gui.GetValue( "trigger shoot") == 0 and gui.GetValue( "trigger shoot key" ) == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
+                        draw.Text( 185 + x1, 225 + y2, "none" )
+                         
+                        draw.Text( 25 + x1, 225 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 225 + y2, "Off" )
+                    elseif gui.GetValue( "trigger shoot") == 1 and gui.GetValue( "trigger shoot key" ) >= 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
+                        draw.Text( 185 + x1, 225 + y2, triggershoot_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 225 + y2, "Hold" )
+                        draw.Text( 270 + x1, 225 + y2, "On" )
+                    else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
+                        draw.Text( 185 + x1, 225 + y2, triggershoot_key )
+                  
+                        draw.Text( 25 + x1, 225 + y2, "Hold" )
+                        draw.Text( 270 + x1, 225 + y2, "Off" )
+                    end
+
+                      
+                
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+                    
+                    if (input.IsButtonDown( gui.GetValue( "dash move key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, warp_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 250, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, warp_key )
+                  
+                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 250, "Off" )
+                      end
+
+
+
+
+            end
+
+            if Lbox_Menu_Open == false then
+                
+                if menu.toggles.aimbot then
+
+            
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
+                      end
+                    draw.SetFont(binds)
+        
+                    
+                    
+                    
+                    if (input.IsButtonDown( gui.GetValue("Aim key") )) and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 then
+                      draw.Color( 200, 200, 200, 250 )
+                      draw.Text( 85 + x1, y2 + 50, "aimbot")
+                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                
+                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                      draw.Text( 25 + x1, y2 + 50, "Hold" )
+                      draw.Text( 270 + x1, y2 + 50, "On" )
+                
+                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
+                      draw.Color( 200, 200, 200, 250 )
+                      draw.Text( 85 + x1, y2 + 50, "aimbot")
+                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                
+                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                       draw.Text( 25 + x1, y2 + 50, "Toggle" )
                       draw.Text( 270 + x1, y2 + 50, "On" )
                     elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
@@ -547,10 +1139,12 @@ local keybindHeight = height
                    
         
                 else
-                    y2 = y2 - 25
+                    if Lbox_Menu_Open == false then
+                        y2 = y2 - 25
+                    end
                 end
         
-                if Menu.keybinde_tab.crits then
+                if menu.toggles.crits then
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -562,7 +1156,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, y2 + 75, "force crits" )
                         draw.Text( 185 + x1, y2 + 75, force_crits_key )
                   
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "On" )
                       else
@@ -580,7 +1174,7 @@ local keybindHeight = height
                 
         
         
-                if Menu.keybinde_tab.dtky then
+                if menu.toggles.dtky then
         
                     
         
@@ -594,7 +1188,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, y2 + 100, "double tap" )
                         draw.Text( 185 + x1, y2 + 100, dt_key )
                   
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "On" )
                       else
@@ -611,7 +1205,7 @@ local keybindHeight = height
                     y2 = y2 - 25  
                 end
         
-                if Menu.keybinde_tab.rechrge then
+                if menu.toggles.rechrge then
         
                     
         
@@ -625,7 +1219,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 125 + y2, "recharge dt" )
                         draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
                         
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "On" )
                       else
@@ -642,7 +1236,7 @@ local keybindHeight = height
                     y2 = y2 - 25
                 end
         
-                if Menu.keybinde_tab.thrdperson then
+                if menu.toggles.thrdperson then
         
                     
         
@@ -656,7 +1250,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 150 + y2, "thirdperson" )
                         draw.Text( 185 + x1, 150 + y2, thirdperson_key  )
                   
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "On" )
                       else
@@ -673,7 +1267,7 @@ local keybindHeight = height
                     y2 = y2 - 25
                 end
         
-                if Menu.keybinde_tab.fakeleg then
+                if menu.toggles.fakeleg then
         
                     
         
@@ -688,7 +1282,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 175 + y2, "fake lag" )
                         draw.Text( 185 + x1, 175 + y2, "none" )
                          
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
                         draw.Text( 270 + x1, 175 + y2, fakelagms )
                     elseif gui.GetValue( "fake lag" ) >= 0 and gui.GetValue( "fake lag key") == 0 then
@@ -703,7 +1297,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 175 + y2, "fake lag" )
                         draw.Text( 185 + x1, 175 + y2, fakelag_key )
                          
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
                         draw.Text( 270 + x1, 175 + y2, fakelagms )
                     else
@@ -719,7 +1313,7 @@ local keybindHeight = height
                     y2 = y2 - 25
                 end
 
-                if Menu.keybinde_tab.triggerbt then
+                if menu.toggles.triggerbt then
         
                     
         
@@ -734,7 +1328,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 200 + y2, "trigger bot" )
                         draw.Text( 185 + x1, 200 + y2, "always on" )
                          
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 200 + y2, "Toggle" )
                         draw.Text( 270 + x1, 200 + y2, "On" )
                     elseif gui.GetValue( "trigger key", trigger_key) and (input.IsButtonDown( gui.GetValue( "trigger key" ) )) then
@@ -742,7 +1336,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 200 + y2, "trigger bot" )
                         draw.Text( 185 + x1, 200 + y2, trigger_key )
                   
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 200 + y2, "Hold" )
                         draw.Text( 270 + x1, 200 + y2, "On" )
                     else
@@ -759,7 +1353,7 @@ local keybindHeight = height
                     y2 = y2 - 25
                 end
 
-                if Menu.keybinde_tab.triggersht then
+                if menu.toggles.triggersht then
         
                     
         
@@ -774,7 +1368,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
                         draw.Text( 185 + x1, 225 + y2, "none" )
                          
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 225 + y2, "Toggle" )
                         draw.Text( 270 + x1, 225 + y2, "On" )
                     elseif gui.GetValue( "trigger shoot") == 0 and gui.GetValue( "trigger shoot key" ) == 0 then
@@ -789,7 +1383,7 @@ local keybindHeight = height
                         draw.Text( 85 + x1, 225 + y2, "trigger shoot" )
                         draw.Text( 185 + x1, 225 + y2, triggershoot_key )
                   
-                        draw.Color( customcolor[1], customcolor[2], customcolor[3], 255 )
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 225 + y2, "Hold" )
                         draw.Text( 270 + x1, 225 + y2, "On" )
                     else
@@ -805,185 +1399,164 @@ local keybindHeight = height
                 else
                     y2 = y2 - 25
                 end
-            
-        end
-            gui.SetValue( "double tap indicator size", 0 )
-            
-            if Lbox_Menu_Open == true then
 
-                if (input.IsButtonDown(MOUSE_LEFT)) then
-                    if not moving then
-                      local height,width = draw.GetScreenSize()
-                      local tmpX = input.GetMousePos()[1] - 100
-                      local tmpY = input.GetMousePos()[2] - 10
-              
-                      local rangeX = tmpX - x1
-                      local rangeY = tmpY - y1 
-                      
-              
-                      if (rangeX >= -100) and (rangeX <= 200) and (rangeY >= -10) and (rangeY <= 10) then
-                        moving = true
+                if menu.toggles.werp then
+        
+                    
+        
+                    if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                        return
                       end
-              
-                      
-                    end
-                  end
-              
-                  if (not input.IsButtonDown(MOUSE_LEFT)) then
-                    moving = false
-                  end
-              
-                  if (moving) then
-                    local height,width = draw.GetScreenSize()
-                    local tmpX = input.GetMousePos()[1] - 155
-                    local tmpY = input.GetMousePos()[2] - 20
+                    draw.SetFont(binds)
                     
-                    if (tmpX <= (height - 1)) and (tmpY <= (width - 1)) and (tmpX >= 1) and (tmpY >= 1) then
-                      x1 = tmpX
-                      y1 = tmpY
-                    end
-                  end
-
-            end
-            
-              
-
-            drawBox()
-            
-           
-        end
-
-        
-
-        
-
-       
-
-        if Menu.main_tab.dtbar then
-
-            local CWindow = {
-                Visible = true,
-                Pos = { 50, 50 },
-                Size = { 400, 250 },
-                Title = "",
-            }
-            CWindow.__index = CWindow
-            
-            -- Create a new window
-            function CWindow.new(pos, size, title)
-                local self = setmetatable({}, CWindow)
-                self.Visible = true
-                self.Pos = pos
-                self.Size = size
-                self.Title = title
-            
-                return self
-            end
-            
-            
-            function CWindow:Draw()
-                if engine.Con_IsVisible() or engine.IsGameUIVisible() then
-                    return
-                end
-            
-                if Lbox_Menu_Open == true then
-                    draw.Color( 255, 255, 255, 255 )
-                    draw.OutlinedRect( barX - 18, barY - 26, barX + barWidth + 22, barY + barHeight + 16 )
-                else
-                end
-                
-
-                draw.Color(41, 42, 46, 255)
-                RoundedRect(barX - 2, barY - 2, barX + barWidth + 2, barY + barHeight + 2, 4)
-
-            
-                if  charge ~= 0  then
-                    draw.Color( dtbarcolr[1], dtbarcolr[2], dtbarcolr[3], 255 )
-                    RoundedRect(barX, barY, barX + math.floor(charge * barWidth), barY + barHeight, 4)
-                end
-            
-            
-                draw.SetFont(nitrofont)
-                local LocalWeapon = entities.GetLocalPlayer():GetPropEntity( "m_hActiveWeapon" )
-                if (warp.CanDoubleTap(LocalWeapon)) and ((entities.GetLocalPlayer():GetPropInt( "m_fFlags" )) & FL_ONGROUND) == 1 and charge == 1 then
-                    --draw.Text( 1000, 500, warp.GetChargedTicks().."/23")
-                else
-                    local state_text = "Not Ready";
-                    draw.Color(255, 255, 255, 255)
-                    
-                    local StateTextWidth, StateTextHeight = draw.GetTextSize(state_text);
-            
-                    draw.Text( barX + barWidth - StateTextWidth - 22, barY - StateTextHeight - (-27), state_text)
-                end
-            
-                    draw.SetFont(nitrofont2)
-                    draw.Color( 255,255,255,255 )
-                    local ticks = "Ticks "..warp.GetChargedTicks().." / 23";
-            
-                    local StateTextWidth, StateTextHeight = draw.GetTextSize(ticks);
-            
-                    draw.Text( barX + barWidth - StateTextWidth - 20, barY - StateTextHeight - 2, ticks)
-                    
-
+                    if (input.IsButtonDown( gui.GetValue( "dash move key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, warp_key )
                   
-                
-            end
-            ----------------------------------------------------------------------------------------------------------
-            if Lbox_Menu_Open == true then
-
-                if (input.IsButtonDown(MOUSE_LEFT)) then
-                    if not moving1 then
-                      local height,width = draw.GetScreenSize()
-                      local tmpX1 = input.GetMousePos()[1]
-                      local tmpY1 = input.GetMousePos()[2]
-              
-                      local rangeX = tmpX1 - barX
-                      local rangeY = tmpY1 - barY 
-              
-                      if (rangeX >= -1) and (rangeX <= 50) and (rangeY >= -20) and (rangeY <= 20) then
-                        moving1 = true
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 250, "On" )
+                      else
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, warp_key )
+                  
+                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 250, "Off" )
                       end
-              
+        
                       
-                    end
-                  end
-              
-                  if (not input.IsButtonDown(MOUSE_LEFT)) then
-                    moving1 = false
-                  end
-              
-                  if (moving1) then
-                    local height,width = draw.GetScreenSize()
-                    local tmpX1 = input.GetMousePos()[1] - 65
-                    local tmpY1 = input.GetMousePos()[2] - 20
-                    
-                    if (tmpX1 <= (height - 1)) and (tmpY1 <= (width - 1)) and (tmpX1 >= 1) and (tmpY1 >= 1) then
-                      barX = tmpX1
-                      barY = tmpY1
-                    end
-                  end
+                else
+                    y2 = y2 - 25  
+                end
+            end
+                
 
+    end
+
+    if menu.toggles.nitro_dt_bar then
+
+        
+        
+        
+        
+            if engine.Con_IsVisible() or engine.IsGameUIVisible() then
+                return
             end
 
+
+        
+            if Lbox_Menu_Open == true then
+                draw.Color( 255, 255, 255, 255 )
+                draw.OutlinedRect( barX - 18, barY - 26, barX + barWidth + 22, barY + barHeight + 16 )
+
+                local x, y = barX, barY
+              local bW, bH = barWidth, barHeight
+              local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+              
+              if IsDragging3 then
+                  if input.IsButtonDown(MOUSE_LEFT) then
+                    barX = mX - math.floor(bW * menu.rX)
+                    barY = mY - math.floor(15 * menu.rY)
+                  else
+                      IsDragging3 = false
+                  end
+              else
+                  if IsMouseInBounds(x - 18, y - 25, x + bW + 18, y + bH + 15) then
+                      if not input.IsButtonDown(MOUSE_LEFT) then
+                          menu.rX = ((mX - x) / bW)
+                          menu.rY = ((mY - y) / 15)
+                      else
+                        barX = mX - math.floor(bW * menu.rX)
+                        barY = mY - math.floor(15 * menu.rY)
+                          IsDragging3 = true
+                      end
+                  end
+              end
+            else
+            end
             
-            local window = CWindow.new({ 450, 120 }, { 100, 15 }, " ")
-            window:Draw()
+
+            draw.Color(41, 42, 46, 255)
+            RoundedRect(barX - 2, barY - 2, barX + barWidth + 2, barY + barHeight + 2, 4)
+
+        
+            if  charge ~= 0  then
+                draw.Color( menu.colors.dtbarcolr, menu.colors.dtbarcolr2, menu.colors.dtbarcolr3, 255 )
+                RoundedRect(barX, barY, barX + math.floor(charge * barWidth), barY + barHeight, 4)
+            end
+        
+        
+            draw.SetFont(nitrofont)
+            local LocalWeapon = entities.GetLocalPlayer():GetPropEntity( "m_hActiveWeapon" )
+            if (warp.CanDoubleTap(LocalWeapon)) and ((entities.GetLocalPlayer():GetPropInt( "m_fFlags" )) & FL_ONGROUND) == 1 and charge == 1 then
+                --draw.Text( 1000, 500, warp.GetChargedTicks().."/23")
+            else
+                local state_text = "Not Ready";
+                draw.Color(255, 255, 255, 255)
+                
+                local StateTextWidth, StateTextHeight = draw.GetTextSize(state_text);
+        
+                draw.Text( barX + barWidth - StateTextWidth - 23, barY - StateTextHeight - (-27), state_text)
+            end
+        
+                draw.SetFont(nitrofont2)
+                draw.Color( 255,255,255,255 )
+                local ticks = "Ticks "..warp.GetChargedTicks().." / 23";
+        
+                local StateTextWidth, StateTextHeight = draw.GetTextSize(ticks);
+        
+                draw.Text( barX + barWidth - StateTextWidth - 18, barY - StateTextHeight - 2, ticks)
+                
+
+              
+            
+        
+            
+
+end
+    
+
+
+   
+
+    ::continue::
+
+    
+end
+callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
+
+
+-- pasted by boghonorojczyzna_
+
+
+
+local t = globals.TickCount()
+client.Command("clear", true)
+local function OnLoad()
+    local lines = {"loaded test lua"}
+    local clr1 = {115, 119, 255}
+    local clr2 = {224, 173, 199}
+    if t < globals.TickCount() + 1 then
+        for i = 1, #lines do
+            local t = i / #lines
+            local clr = {
+                math.floor(clr1[1] + (clr2[1] - clr1[1]) * t),
+                math.floor(clr1[2] + (clr2[2] - clr1[2]) * t),
+                math.floor(clr1[3] + (clr2[3] - clr1[3]) * t)
+            }
+            printc(clr[1], clr[2], clr[3], 255, lines[i])
         end
-
-end)
-
-
-
-
-
-callbacks.Register( "Unload", function() 
-    local entities = entities.FindByClass( "CBaseAnimating" )
-    for i, entity in pairs(entities) do 
-        entity:SetPropFloat( 1, "m_flPlaybackRate" )
+        callbacks.Unregister( "CreateMove", "awjkudl9i0" )
     end
-end)
+end
+callbacks.Unregister( "CreateMove", "awjkudl9i0" )
+callbacks.Register( "CreateMove", "awjkudl9i0", OnLoad )
 
 callbacks.Register("CreateMove", function(cmd)
     updateBarCharge()
 end)
 
+
+table.insert(notifications, 1, {time = globals.CurTime(), text = "Loaded Lua!"})
