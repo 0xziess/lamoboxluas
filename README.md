@@ -1,4 +1,6 @@
-![nitropreview](https://github.com/0xziess/lamoboxluas/assets/87069136/f6fea1d1-64ea-45e5-8294-2a1a2fed64f1)
+![image](https://github.com/0xziess/lamoboxluas/assets/87069136/0a6e16b0-2cc7-444b-892a-ff19de9a3eb8)
+
+credits to muqa and lnx
 
 nitro.lua requires lNXlib and ImMenu
 
