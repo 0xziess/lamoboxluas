@@ -9,8 +9,8 @@ local menu = {
     rX = 0,
     rY = 0,
 
-    rX2 = 0,
-    rY2 = 0,
+    rX5 = 0,
+    rY5 = 0,
 
     tabs = {
         tab_1 = true,
@@ -22,8 +22,6 @@ local menu = {
     buttons = {
         main = false,
         colors = false,
-        keybinds = false,
-        cfg = false,
 
         cfg_load = false,
         cfg_save = false,
@@ -70,14 +68,6 @@ local textcolorwhenoff = {120, 120, 120, 250}
 local nitrofont = draw.CreateFont('Verdana', 15, 1000, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 local nitrofont2 = draw.CreateFont('Tahoma', 16, 1000, FONTFLAG_CUSTOM | FONTFLAG_OUTLINE)
 
-local barWidth = 115
-local barHeight = 9 -- change this to make the dt bar bigger
-local minTicks = 1
-local maxTicks = 23
-local barOffset = 45
-
-
-
 local function clamp(a,b,c)return(a<b)and b or(a>c)and c or a end
 
 local charge = 0;
@@ -103,27 +93,6 @@ local Textures = lnxLib.UI.Textures
 ---@alias Context { Rect: number[] }
 
 --[[ Vars ]]
-
-local mouseHelper = KeyHelper.new(MOUSE_LEFT)
-local currentId = 0
-local activeId = nil
-local dragPos = nil
-
-
-
----@type lnxLib
-local lnxLib = require("lnxLib")
-local Input, KeyHelper = lnxLib.Utils.Input, lnxLib.Utils.KeyHelper
-local Textures = lnxLib.UI.Textures
-
----@alias Context { Rect: number[] }
-
---[[ Vars ]]
-
-local mouseHelper = KeyHelper.new(MOUSE_LEFT)
-local currentId = 0
-local activeId = nil
-local dragPos = nil
 
 local circle = Textures.Circle(16, { 255, 255, 255, 255 })
 
@@ -156,45 +125,11 @@ local function RoundedRect(x1, y1, x2, y2, r)
     draw.FilledRect(x1, y1 + r, x2, y2 - r)
 end
 
-local function GetInteraction(x1, y1, x2, y2, id)
-  -- Is a different element active?
-  if activeId ~= nil and activeId ~= id then
-      return false, false, false
-  end
-
-  local hovered = Input.MouseInBounds(x1, y1, x2, y2) or id == activeId
-  local clicked = hovered and (mouseHelper:Released())
-  local active = hovered and (mouseHelper:Down())
-
-  -- Should this element be active?
-  if active and activeId == nil then
-      activeId = id
-  end
-
-  -- Is this element no longer active?
-  if activeId == id and not active then
-      activeId = nil
-  end
-
-  return hovered, clicked, active
-end
-
-
 local tahoma = draw.CreateFont( "Tahoma", 12, 400, FONTFLAG_OUTLINE )
 local tahoma2 = draw.CreateFont( "Tahoma", 12, 400)
 local tahoma_bold = draw.CreateFont( "Tahoma", 12, 800, FONTFLAG_OUTLINE )
 
 local f = math.floor
-
-local function GetPressedKey()
-    for i = 1, 113 do 
-        if input.IsButtonPressed( i ) then
-            if i ~= 107 then 
-                return i
-            end
-        end
-    end
-end
 
 local function IsMouseInBounds(x,y,x2,y2)
     local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
@@ -217,12 +152,44 @@ local function Toggle(x, y, name, toggle_bool)
     if Toggles[toggle_bool] == nil then
         table.insert(Toggles, toggle_bool)
     end
-    local clr = {10, 10, 10, 50}
+    local clr = {75, 75, 75, 80}
     if IsMouseInBounds(table.unpack(pos)) and input.IsButtonPressed(MOUSE_LEFT) then
         local currentTime = globals.RealTime()
         if currentTime - (Toggles[toggle_bool] or 0) >= 0.1 then
             menu.toggles[toggle_bool] = not menu.toggles[toggle_bool]
             Toggles[toggle_bool] = currentTime
+        end
+        clr = {65, 65, 65, 50}
+    end
+    draw.Color(table.unpack(clr))
+    draw.FilledRect(table.unpack(pos))
+    draw.Color(255, 255, 255, 255)
+    draw.Text(pos[3]+5,y+f(h/4), name)
+    if menu.toggles[toggle_bool] == true then
+        draw.Color(40, 235, 89, 255)
+        draw.OutlinedRect(table.unpack(pos))
+        draw.FilledRect(pos[1] + 5, pos[2] + 5, pos[3] - 5, pos[4] - 5)
+    end
+    if menu.toggles[toggle_bool] == false then
+        draw.Color(255, 100, 100, 255)
+        draw.OutlinedRect(table.unpack(pos))
+        draw.FilledRect(pos[1] + 5, pos[2] + 5, pos[3] - 5, pos[4] - 5)
+    end
+end
+
+local Toggles2 = {}
+local function Toggle2(x, y, name, toggle_bool)
+    local w, h = draw.GetTextSize(name)
+    local pos = {x, y, x + 35, y + 20}
+    if Toggles2[toggle_bool] == nil then
+        table.insert(Toggles2, toggle_bool)
+    end
+    local clr = {10, 10, 10, 50}
+    if IsMouseInBounds(table.unpack(pos)) and input.IsButtonPressed(MOUSE_LEFT) then
+        local currentTime = globals.RealTime()
+        if currentTime - (Toggles2[toggle_bool] or 0) >= 0.1 then
+            menu.toggles[toggle_bool] = not menu.toggles[toggle_bool]
+            Toggles2[toggle_bool] = currentTime
         end
         clr = {40, 40, 40, 50}
     end
@@ -233,8 +200,13 @@ local function Toggle(x, y, name, toggle_bool)
     draw.Color(255, 255, 255, 255)
     draw.Text(pos[3]+5,y+f(h/4), name)
     if menu.toggles[toggle_bool] == true then
-        draw.Color(60, 60, 60, 255)
-        draw.FilledRect(pos[1] + 5, pos[2] + 5, pos[3] - 5, pos[4] - 5)
+        draw.Color(80, 255, 80, 255)
+        draw.OutlinedRect(table.unpack(pos))
+        draw.FilledRect(pos[1] + 20 , pos[2] + 5, pos[3] - 5, pos[4] - 5)
+    else
+        draw.Color(255, 100, 100, 255)
+        draw.OutlinedRect(table.unpack(pos))
+        draw.FilledRect(pos[1] + 5 , pos[2] + 5, pos[3] - 20, pos[4] - 5)
     end
 end
 
@@ -302,7 +274,7 @@ end
 
 local function NotificationBox(x,y,string,alphaProcent)
     local r,g,b = 53,126,53
-    string = "Notification: ".. string
+    string = string
     local w,h = draw.GetTextSize(string)
     local padding = 5
     draw.Color(r,g,b,f(50*alphaProcent))
@@ -328,11 +300,16 @@ end
 local IsDragging = false
 local IsDragging2 = false
 local IsDragging3 = false
-local IsDraggingDMGLOG = false
+
+local barWidth = 115
+local barHeight = 9
+local minTicks = 1
+local maxTicks = 23
+local barOffset = 45
 
 local buttons = {
-    [1] = {name="Main", table="antiaim"},
-    [2] = {name="Colors", table="visuals"},
+    [1] = {name="Main", table="main"},
+    [2] = {name="Colors", table="colors"},
 }
 
 local function DrawMenu()
@@ -371,12 +348,12 @@ local function DrawMenu()
 
     draw.Color( 53,126,53, 255 )
     draw.OutlinedRect(x, y - 15, x + bW, y + bH) -- outline to the main menu
-    draw.OutlinedRect(x, y - 15, x + bW, y) -- outline of blue bar
+    draw.OutlinedRect(x, y - 15, x + bW, y) -- outline of green bar
 
     draw.Color( 53,126,53,125 )
-    draw.FilledRect(x, y - 15, x + bW, y) -- blue bar
+    draw.FilledRect(x, y - 15, x + bW, y) -- green bar
 
-    local string = "misc tools test"
+    local string = "nitro things"
     local w, h = draw.GetTextSize(string)
     draw.Color(255, 255, 255, 255)
     --draw.Text(math.floor(x+(bW/2)-(w/2)), math.floor(y-h), string) -- name
@@ -414,22 +391,16 @@ local function DrawMenu()
         startY = startY + 25
     end
 
-    if menu.buttons.antiaim then 
+    if menu.buttons.main then 
         menu.tabs.tab_1=true
         menu.tabs.tab_2=false
         menu.tabs.tab_3=false
         menu.tabs.tab_4=false
     end
-    if menu.buttons.visuals then 
+    if menu.buttons.colors then 
         menu.tabs.tab_1=false
         menu.tabs.tab_2=true
         menu.tabs.tab_3=false
-        menu.tabs.tab_4=false
-    end
-    if menu.buttons.misc then 
-        menu.tabs.tab_1=false
-        menu.tabs.tab_2=false
-        menu.tabs.tab_3=true
         menu.tabs.tab_4=false
     end
 
@@ -476,23 +447,6 @@ local function DrawMenu()
         Slider(x1+90,y1+210,x1+240,y1+220, "bgcolr3" ,0,255, "Blue")
 
         
-    end
-
-    if menu.tabs.tab_3 then
-        menu.w = 415
-        menu.h = 360
-        local x1,y1 = x+5, y+20
-
-        Island(x1,y1,x1+150,y1+55,"Crosshair Indicators")
-        Toggle(x1+5, y1+5,"Enable", "crosshair_indicators")
-
-        y1 = y1+50
-        Island(x1,y1,x1+150,y1+55,"Damage Logger")
-        Toggle(x1+5, y1+5,"Enable", "dmg_logger")
-        Toggle(x1+5, y1+30,"Custom Position", "dmg_logger_custom_pos")
-
-
-
     end
 end
 callbacks.Unregister( "Draw", "awftgybhdunjmiko")
@@ -561,7 +515,7 @@ local sW,sH = draw.GetScreenSize()
 local screenX, screenY = draw.GetScreenSize()
 local barX = math.floor(screenX / 2 - barWidth / 2)
 local barY = math.floor(screenY / 2) + barOffset
-local x1, y1, width, height = 50, 980, 310, 280
+local x1, y1, width, height = 50, 980, 320, 280
 local moving = false
 local moving1 = false
 local IsDragging2 = false
@@ -641,14 +595,14 @@ local function NonMenuDraw()
     
 
     if menu.buttons.cfg_save then 
-        CreateCFG([[MiscToolsLua]], menu)
-        table.insert(notifications, 1, {time = globals.CurTime(), text = "Saved Config!"})
+        CreateCFG([[nitrolua]], menu)
+        table.insert(notifications, 1, {time = globals.CurTime(), text = "saved cfg"})
     end
     
 
     if menu.buttons.cfg_load then 
-        menu = LoadCFG([[MiscToolsLua]])
-        table.insert(notifications, 1, {time = globals.CurTime(), text = "Loaded Config!"})
+        menu = LoadCFG([[nitrolua]])
+        table.insert(notifications, 1, {time = globals.CurTime(), text = "loaded cfg"})
     end
 
     
@@ -753,15 +707,17 @@ local function NonMenuDraw()
                     draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                     RoundedRect(posX + 15, posY + 35, posX + width + 25, posY + 210 - 172, 0)
 
-                    Toggle(320 + x1, y2 + 48,"", "aimbot")
-                    Toggle(320 + x1, y2 + 73,"", "crits")
-                    Toggle(320 + x1, y2 + 98,"", "dtky")
-                    Toggle(320 + x1, y2 + 123,"", "rechrge")
-                    Toggle(320 + x1, y2 + 148,"", "thrdperson")
-                    Toggle(320 + x1, y2 + 173,"", "fakeleg")
-                    Toggle(320 + x1, y2 + 198,"", "triggerbt")
-                    Toggle(320 + x1, y2 + 223,"", "triggersht")
-                    Toggle(320 + x1, y2 + 248,"", "werp")
+                    Toggle2(320 + x1, y2 + 48,"", "aimbot")
+                    Toggle2(320 + x1, y2 + 73,"", "crits")
+                    Toggle2(320 + x1, y2 + 98,"", "dtky")
+                    Toggle2(320 + x1, y2 + 123,"", "rechrge")
+                    Toggle2(320 + x1, y2 + 148,"", "thrdperson")
+                    Toggle2(320 + x1, y2 + 173,"", "fakeleg")
+                    Toggle2(320 + x1, y2 + 198,"", "triggerbt")
+                    Toggle2(320 + x1, y2 + 223,"", "triggersht")
+                    Toggle2(320 + x1, y2 + 248,"", "werp")
+
+                    
 
                     
 
@@ -1073,14 +1029,14 @@ local function NonMenuDraw()
                         draw.Text( 185 + x1, y2 + 250, warp_key )
                   
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "On" )
                       else
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 250, "dash move" )
                         draw.Text( 185 + x1, y2 + 250, warp_key )
                   
-                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "Off" )
                       end
 
@@ -1415,14 +1371,14 @@ local function NonMenuDraw()
                         draw.Text( 185 + x1, y2 + 250, warp_key )
                   
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "On" )
                       else
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 250, "dash move" )
                         draw.Text( 185 + x1, y2 + 250, warp_key )
                   
-                        draw.Text( 25 + x1, y2 + 250, "Toggle" )
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "Off" )
                       end
         
@@ -1535,9 +1491,9 @@ callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
 local t = globals.TickCount()
 client.Command("clear", true)
 local function OnLoad()
-    local lines = {"loaded test lua"}
-    local clr1 = {115, 119, 255}
-    local clr2 = {224, 173, 199}
+    local lines = {"nitro and lmaobox collab"}
+    local clr1 = {166, 235, 40}
+    local clr2 = {40, 235, 89}
     if t < globals.TickCount() + 1 then
         for i = 1, #lines do
             local t = i / #lines
@@ -1559,4 +1515,4 @@ callbacks.Register("CreateMove", function(cmd)
 end)
 
 
-table.insert(notifications, 1, {time = globals.CurTime(), text = "Loaded Lua!"})
+table.insert(notifications, 1, {time = globals.CurTime(), text = "loaded pasted lua"})
