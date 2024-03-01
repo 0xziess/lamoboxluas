@@ -513,8 +513,6 @@ local screenX, screenY = draw.GetScreenSize()
 local barX = math.floor(screenX / 2 - barWidth / 2)
 local barY = math.floor(screenY / 2) + barOffset
 local x1, y1, width, height = 50, 980, 320, 280
-local moving = false
-local moving1 = false
 local IsDragging2 = false
 
 local function NonMenuDraw()
@@ -540,7 +538,7 @@ local function NonMenuDraw()
         "mwup", "mwdn"
     }
     
-    local x2, y2 = x1, y1
+    local y2 = y1
 
     local posX, posY = x1, y1
     
