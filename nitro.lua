@@ -9,9 +9,6 @@ local menu = {
     rX = 0,
     rY = 0,
 
-    rX5 = 0,
-    rY5 = 0,
-
     tabs = {
         tab_1 = true,
         tab_2 = false,
