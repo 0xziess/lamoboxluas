@@ -3,7 +3,7 @@
 
 credits to muqa and lnx
 
-also the keybind menu + dt bar are movable
+the keybind menu + dt bar are movable
 
 nitro.lua requires lNXlib and ImMenu
 
