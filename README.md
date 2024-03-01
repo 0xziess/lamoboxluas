@@ -5,8 +5,6 @@ credits to muqa and lnx
 
 the keybind menu + dt bar are movable
 
-nitro.lua requires lNXlib and ImMenu
-
-https://github.com/lnx00/Lmaobox-ImMenu/blob/main/src/ImMenu.lua
+nitro.lua requires lNXlib
 
 https://github.com/lnx00/Lmaobox-Library/releases/download/v1.00.0/lnxLib.lua
