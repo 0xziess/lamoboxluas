@@ -679,7 +679,7 @@ local function NonMenuDraw()
                             IsDragging = false
                         end
                     else
-                        if IsMouseInBounds(x, y, x + bW, y + bH) then
+                        if IsMouseInBounds(x - 10, y - 10, x + bW + 50, y + bH + 10) then
                             if not input.IsButtonDown(MOUSE_LEFT) then
                                 menu.rX = ((mX - x) / bW)
                                 menu.rY = ((mY - y) / 15)
