@@ -736,39 +736,70 @@ local function NonMenuDraw()
                     
                     
                     
-                    if (input.IsButtonDown( gui.GetValue("Aim key") )) and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 then
-                      draw.Color( 200, 200, 200, 250 )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                      draw.Text( 25 + x1, y2 + 50, "Hold" )
-                      draw.Text( 270 + x1, y2 + 50, "On" )
-                
-                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
-                      draw.Color( 200, 200, 200, 250 )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
-                      draw.Text( 270 + x1, y2 + 50, "On" )
-                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
-                      draw.Text( 270 + x1, y2 + 50, "Off" )
-                    else
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot" )
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Text( 25 + x1, y2 + 50, "Hold" )
-                      draw.Text( 270 + x1, y2 + 50, "Off" )
-                    end
+                    if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Hold" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                  
+                      elseif gui.GetValue("Aim key") >= 1 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") >= 1 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot" )
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Text( 25 + x1, y2 + 50, "Hold" )
+                        draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 then
+                          draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 0 then
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 85 + x1, y2 + 50, "aimbot" )
+                          draw.Text( 185 + x1, y2 + 50, "none" )
+                    
+                          draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                          draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
+                          draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 85 + x1, y2 + 50, "aimbot")
+                          draw.Text( 185 + x1, y2 + 50, "none" )
+                    
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                          draw.Text( 270 + x1, y2 + 50, "Off" )
+                      end
         
                    
         
@@ -781,7 +812,7 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "crit hack key" ) )) then
+                    if (input.IsButtonDown( gui.GetValue( "crit hack key" ) )) and gui.GetValue("crit hack key") >= 0 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 75, "force crits" )
                         draw.Text( 185 + x1, y2 + 75, force_crits_key )
@@ -789,10 +820,17 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "On" )
-                      else
+                    elseif gui.GetValue("crit hack key") >= 1 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 75, "force crits" )
                         draw.Text( 185 + x1, y2 + 75, force_crits_key )
+                  
+                        draw.Text( 25 + x1, y2 + 75, "Hold" )
+                        draw.Text( 270 + x1, y2 + 75, "Off" )
+                    elseif gui.GetValue("crit hack key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 75, "force crits" )
+                        draw.Text( 185 + x1, y2 + 75, "none" )
                   
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "Off" )
@@ -811,7 +849,7 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "double tap key" ) )) then
+                    if (input.IsButtonDown( gui.GetValue( "double tap key" ) )) and gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force key" then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 100, "double tap" )
                         draw.Text( 185 + x1, y2 + 100, dt_key )
@@ -819,10 +857,40 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "On" )
-                      else
+                    elseif gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force key" then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 100, "double tap" )
                         draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "Off" )
+                    elseif gui.GetValue("double tap key") == 0 and gui.GetValue("double tap") == "force key" then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
+                  
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "Off" )
+                    elseif gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force always" then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 100, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 100, "On" )
+                    elseif gui.GetValue("double tap key") == 0 and gui.GetValue("double tap") == "force always" then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 100, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 100, "On" )
+                    elseif gui.GetValue("double tap") == "none" then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
                   
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "Off" )
@@ -839,7 +907,14 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "force recharge key" ) )) then
+                    if gui.GetValue( "force recharge key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 125 + y2, "recharge dt" )
+                        draw.Text( 185 + x1, 125 + y2, "none" )
+                  
+                        draw.Text( 25 + x1, 125 + y2, "Hold" )
+                        draw.Text( 270 + x1, 125 + y2, "Off" )
+                    elseif gui.GetValue( "force recharge key") >= 0 and (input.IsButtonDown( gui.GetValue( "force recharge key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, 125 + y2, "recharge dt" )
                         draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
@@ -847,7 +922,7 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "On" )
-                      else
+                    elseif gui.GetValue( "force recharge key") >= 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 125 + y2, "recharge dt" )
                         draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
@@ -867,7 +942,22 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if gui.GetValue( "thirdperson" ) == 1 then
+                    if gui.GetValue( "thirdperson" ) == 1 and gui.GetValue( "thirdperson key") == 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, "none"  )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "On" )
+                    elseif gui.GetValue( "thirdperson" ) == 0 and gui.GetValue( "thirdperson key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, "none" )
+                  
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "Off" )
+                    elseif gui.GetValue( "thirdperson" ) == 1 and gui.GetValue( "thirdperson key") >= 0 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, 150 + y2, "thirdperson" )
                         draw.Text( 185 + x1, 150 + y2, thirdperson_key  )
@@ -875,7 +965,7 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "On" )
-                      else
+                    elseif gui.GetValue( "thirdperson" ) == 0 and gui.GetValue( "thirdperson key") >= 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 150 + y2, "thirdperson" )
                         draw.Text( 185 + x1, 150 + y2, thirdperson_key )
@@ -1018,7 +1108,7 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "dash move key" ) )) then
+                    if (input.IsButtonDown( gui.GetValue( "dash move key" ) )) and gui.GetValue( "dash move key") >= 0 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 250, "dash move" )
                         draw.Text( 185 + x1, y2 + 250, warp_key )
@@ -1026,7 +1116,14 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "On" )
-                      else
+                      elseif gui.GetValue( "dash move key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, "none" )
+                  
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
+                        draw.Text( 270 + x1, y2 + 250, "Off" )
+                      elseif gui.GetValue( "dash move key") >= 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 250, "dash move" )
                         draw.Text( 185 + x1, y2 + 250, warp_key )
@@ -1053,39 +1150,70 @@ local function NonMenuDraw()
                     
                     
                     
-                    if (input.IsButtonDown( gui.GetValue("Aim key") )) and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 then
-                      draw.Color( 200, 200, 200, 250 )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                      draw.Text( 25 + x1, y2 + 50, "Hold" )
-                      draw.Text( 270 + x1, y2 + 50, "On" )
-                
-                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
-                      draw.Color( 200, 200, 200, 250 )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
-                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
-                      draw.Text( 270 + x1, y2 + 50, "On" )
-                    elseif (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot")
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 25 + x1, y2 + 50, "Toggle" )
-                      draw.Text( 270 + x1, y2 + 50, "Off" )
-                    else
-                      draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
-                      draw.Text( 85 + x1, y2 + 50, "aimbot" )
-                      draw.Text( 185 + x1, y2 + 50, aimbot_key )
-                
-                      draw.Text( 25 + x1, y2 + 50, "Hold" )
-                      draw.Text( 270 + x1, y2 + 50, "Off" )
-                    end
+                    if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Hold" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                  
+                      elseif gui.GetValue("Aim key") >= 1 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") >= 1 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot" )
+                        draw.Text( 185 + x1, y2 + 50, aimbot_key )
+                  
+                        draw.Text( 25 + x1, y2 + 50, "Hold" )
+                        draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 then
+                          draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 0 then
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 85 + x1, y2 + 50, "aimbot" )
+                          draw.Text( 185 + x1, y2 + 50, "none" )
+                    
+                          draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                          draw.Text( 270 + x1, y2 + 50, "Off" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 1 then
+                          draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 50, "aimbot")
+                        draw.Text( 185 + x1, y2 + 50, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 50, "On" )
+                      elseif gui.GetValue("Aim key") == 0 and (aimbot_mode == "press-to-toggle") and gui.GetValue("aim bot") == 0 then
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 85 + x1, y2 + 50, "aimbot")
+                          draw.Text( 185 + x1, y2 + 50, "none" )
+                    
+                          draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                          draw.Text( 25 + x1, y2 + 50, "Toggle" )
+                          draw.Text( 270 + x1, y2 + 50, "Off" )
+                      end
         
                    
         
@@ -1102,7 +1230,7 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "crit hack key" ) )) then
+                    if (input.IsButtonDown( gui.GetValue( "crit hack key" ) )) and gui.GetValue("crit hack key") >= 1 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 75, "force crits" )
                         draw.Text( 185 + x1, y2 + 75, force_crits_key )
@@ -1110,10 +1238,17 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "On" )
-                      else
+                    elseif gui.GetValue("crit hack key") >= 1 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 75, "force crits" )
                         draw.Text( 185 + x1, y2 + 75, force_crits_key )
+                  
+                        draw.Text( 25 + x1, y2 + 75, "Hold" )
+                        draw.Text( 270 + x1, y2 + 75, "Off" )
+                    elseif gui.GetValue("crit hack key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 75, "force crits" )
+                        draw.Text( 185 + x1, y2 + 75, "none" )
                   
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "Off" )
@@ -1134,7 +1269,7 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "double tap key" ) )) then
+                    if (input.IsButtonDown( gui.GetValue( "double tap key" ) )) and gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force key" then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 100, "double tap" )
                         draw.Text( 185 + x1, y2 + 100, dt_key )
@@ -1142,10 +1277,40 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "On" )
-                      else
+                    elseif gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force key" then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 100, "double tap" )
                         draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "Off" )
+                    elseif gui.GetValue("double tap key") == 0 and gui.GetValue("double tap") == "force key" then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
+                  
+                        draw.Text( 25 + x1, y2 + 100, "Hold" )
+                        draw.Text( 270 + x1, y2 + 100, "Off" )
+                    elseif gui.GetValue("double tap key") >= 1 and gui.GetValue("double tap") == "force always" then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, dt_key )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 100, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 100, "On" )
+                    elseif gui.GetValue("double tap key") == 0 and gui.GetValue("double tap") == "force always" then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, y2 + 100, "Toggle" )
+                        draw.Text( 270 + x1, y2 + 100, "On" )
+                    elseif gui.GetValue("double tap") == "none" then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 100, "double tap" )
+                        draw.Text( 185 + x1, y2 + 100, "none" )
                   
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "Off" )
@@ -1165,7 +1330,14 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if (input.IsButtonDown( gui.GetValue( "force recharge key" ) )) then
+                    if gui.GetValue( "force recharge key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 125 + y2, "recharge dt" )
+                        draw.Text( 185 + x1, 125 + y2, "none" )
+                  
+                        draw.Text( 25 + x1, 125 + y2, "Hold" )
+                        draw.Text( 270 + x1, 125 + y2, "Off" )
+                    elseif gui.GetValue( "force recharge key") >= 0 and (input.IsButtonDown( gui.GetValue( "force recharge key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, 125 + y2, "recharge dt" )
                         draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
@@ -1173,7 +1345,7 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "On" )
-                      else
+                    elseif gui.GetValue( "force recharge key") >= 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 125 + y2, "recharge dt" )
                         draw.Text( 185 + x1, 125 + y2, dt_key_recharge )
@@ -1196,7 +1368,22 @@ local function NonMenuDraw()
                       end
                     draw.SetFont(binds)
                     
-                    if gui.GetValue( "thirdperson" ) == 1 then
+                    if gui.GetValue( "thirdperson" ) == 1 and gui.GetValue( "thirdperson key") == 0 then
+                        draw.Color( 200, 200, 200, 250 )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, "none"  )
+                  
+                        draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "On" )
+                    elseif gui.GetValue( "thirdperson" ) == 0 and gui.GetValue( "thirdperson key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, 150 + y2, "thirdperson" )
+                        draw.Text( 185 + x1, 150 + y2, "none" )
+                  
+                        draw.Text( 25 + x1, 150 + y2, "Toggle" )
+                        draw.Text( 270 + x1, 150 + y2, "Off" )
+                    elseif gui.GetValue( "thirdperson" ) == 1 and gui.GetValue( "thirdperson key") >= 0 then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, 150 + y2, "thirdperson" )
                         draw.Text( 185 + x1, 150 + y2, thirdperson_key  )
@@ -1204,7 +1391,7 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "On" )
-                      else
+                    elseif gui.GetValue( "thirdperson" ) == 0 and gui.GetValue( "thirdperson key") >= 0 then
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, 150 + y2, "thirdperson" )
                         draw.Text( 185 + x1, 150 + y2, thirdperson_key )
@@ -1368,6 +1555,13 @@ local function NonMenuDraw()
                         draw.Color( menu.colors.all, menu.colors.all2, menu.colors.all3, 255 )
                         draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "On" )
+                      elseif gui.GetValue( "dash move key") == 0 then
+                        draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
+                        draw.Text( 85 + x1, y2 + 250, "dash move" )
+                        draw.Text( 185 + x1, y2 + 250, "none" )
+                  
+                        draw.Text( 25 + x1, y2 + 250, "Hold" )
+                        draw.Text( 270 + x1, y2 + 250, "Off" )
                       else
                         draw.Color( textcolorwhenoff[1], textcolorwhenoff[2], textcolorwhenoff[3], textcolorwhenoff[4] )
                         draw.Text( 85 + x1, y2 + 250, "dash move" )
