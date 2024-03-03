@@ -171,6 +171,9 @@ callbacks.Register("Draw", function()
     draw.Color(80, 204, 222, 255)
     local dtStateText = "CHARGED";
 
+    draw.Color(25, 25, 25, 255)
+    draw.OutlinedRect(barX, barY, math.floor(barX + barWidth2), barY + barHeight)
+
     if charge == 0 then
         draw.Color(207, 51, 42, 255)
         local dtStateTextWidth, dtStateTextHeight = draw.GetTextSize("LOW CHARGE");
@@ -180,10 +183,7 @@ callbacks.Register("Draw", function()
         draw.Color(255, 255, 255, 255)
         draw.TexturedRect(gradientBarMaskCustom2, barX, barY, math.floor(screenX / 2 - 160 / 2 + barWidth + 10), barY + barHeight)
 
-        draw.Color(25, 25, 25, 255)
-        draw.OutlinedRect(barX, barY, math.floor(barX + barWidth2), barY + barHeight)
 
-        
     elseif charging then
         dtStateText = "RECHARGING";
         draw.Color(235, 240, 26, 255)
