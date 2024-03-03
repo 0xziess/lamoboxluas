@@ -1,3 +1,8 @@
+local menu = {
+    rX = 0,
+    rY = 0,
+}
+
 local tickstxt = draw.CreateFont("Smallest Pixel", 13, 400, FONTFLAG_OUTLINE, 1)
 local statetxt = draw.CreateFont("Smallest Pixel", 11, 400, FONTFLAG_OUTLINE, 1)
 local barWidth = 170
@@ -28,19 +33,6 @@ local updateBarCharge = (function()
         last_charge = charge;
     end
 end)();
-
-local gradientBarMask = (function()
-    local chars = {}
-
-    for i = 0, 255 do
-        chars[i * 4 + 1] = 255
-        chars[i * 4 + 2] = 255 - i
-        chars[i * 4 + 3] = 255 - i 
-        chars[i * 4 + 4] = 255
-    end
-
-    return draw.CreateTextureRGBA(string.char(table.unpack(chars)), 1, 256)
-end)()
 
 local function createCustomGradientBarMask(colorTop, colorMiddle, colorBottom)
     local chars = {}
@@ -79,30 +71,28 @@ local colorBottom2 = {125, 133, 125}
 local gradientBarMaskCustom = createCustomGradientBarMask(colorTop, colorMiddle, colorBottom)
 local gradientBarMaskCustom2 = createCustomGradientBarMask(colorTop2, colorMiddle2, colorBottom2)
 
+local IsDragging = false
 
-
+local function IsMouseInBounds(x,y,x2,y2)
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+    if mX >= x and mX <= x2 and mY >= y and mY <= y2 then
+        return true 
+    end
+    return false
+end
 
 
 function lerp(a, b, t)
         return a + (b - a) * t
     end
 
-    function lerp2(a, b, t2)
-        return a + (b - a) * t2
-    end
-    
-    function easeInOutQuad(t)
-        return t < 0.5 and 2 * t * t or 1 - ((-2 * t + 2) ^ 2) / 2
-    end
-
-    function easeInOutQuad2(t3)
-        return t3 < 0.5 and 2 * t3 * t3 or 1 - ((-2 * t3 + 2) ^ 2) / 2
-    end
-
     function easeOutQuad(t)
         return 1 - (1 - t) ^ 2
     end
-    
+
+local screenX, screenY = draw.GetScreenSize()
+local barX = math.floor(screenX / 2 - 160 / 2)
+local barY = math.floor(screenY / 2) + barOffset
 
 callbacks.Register("Draw", function()
     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
@@ -116,9 +106,30 @@ callbacks.Register("Draw", function()
 
     
 
-    local screenX, screenY = draw.GetScreenSize()
-    local barX = math.floor(screenX / 2 - 160 / 2)
-    local barY = math.floor(screenY / 2) + barOffset
+
+    local x, y = barX, barY
+    local bW, bH = barWidth, barHeight
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+
+    if IsDragging then
+        if input.IsButtonDown(MOUSE_LEFT) then
+            barX = mX - math.floor(bW * menu.rX)
+            barY = mY - math.floor(15 * menu.rY)
+        else
+            IsDragging = false
+        end
+    else
+        if IsMouseInBounds(x - 10, y - 10, x + bW + 50, y + bH + 10) then
+            if not input.IsButtonDown(MOUSE_LEFT) then
+                menu.rX = ((mX - x) / bW)
+                menu.rY = ((mY - y) / 15)
+            else
+                barX = mX - math.floor(bW * menu.rX)
+                barY = mY - math.floor(15 * menu.rY)
+                IsDragging = true
+            end
+        end
+    end
 
     -- Background
     draw.Color(10, 10, 10, 200)
@@ -141,7 +152,7 @@ callbacks.Register("Draw", function()
     end
 
     if charge == 0 then
-        barWidth = lerp2(barWidth, 0, t3 * speed2)
+        barWidth = lerp(barWidth, 0, t3 * speed2)
     end
 
     if charge ~= 1 then
@@ -154,7 +165,9 @@ callbacks.Register("Draw", function()
 
     draw.Color(255, 255, 255, math.floor(math.sin(globals.CurTime()*0) * 100 + 155))
 
-    draw.TexturedRect(gradientBarMaskCustom, barX, barY, math.floor(screenX / 2 - 160 / 2 + barWidth + 10), barY + barHeight)
+    draw.TexturedRect(gradientBarMaskCustom, barX, barY, math.floor(barX + barWidth + 10), barY + barHeight)
+
+   
     -- Border
     
 
@@ -181,7 +194,10 @@ callbacks.Register("Draw", function()
         draw.Text(math.floor(barX + barWidth2 - dtStateTextWidth), barY - dtStateTextHeight - 3, "LOW CHARGE")
 
         draw.Color(255, 255, 255, 255)
-        draw.TexturedRect(gradientBarMaskCustom2, barX, barY, math.floor(screenX / 2 - 160 / 2 + barWidth + 10), barY + barHeight)
+        draw.TexturedRect(gradientBarMaskCustom2, barX, barY, math.floor(barX + barWidth + 10), barY + barHeight)
+
+        draw.Color(25, 25, 25, 255)
+        draw.OutlinedRect(barX, barY, math.floor(barX + barWidth2), barY + barHeight)
 
 
     elseif charging then
@@ -195,7 +211,7 @@ callbacks.Register("Draw", function()
         draw.Text(math.floor(barX + barWidth2 - dtStateTextWidth), barY - dtStateTextHeight - 3, "LOW CHARGE")
 
         draw.Color(255, 255, 255, 255)
-        draw.TexturedRect(gradientBarMaskCustom2, barX, barY, math.floor(screenX / 2 - 160 / 2 + barWidth + 10), barY + barHeight)
+        draw.TexturedRect(gradientBarMaskCustom2, barX, barY, math.floor(barX + barWidth + 10), barY + barHeight)
 
         draw.Color(25, 25, 25, 255)
         draw.OutlinedRect(barX, barY, math.floor(barX + barWidth2), barY + barHeight)
@@ -224,7 +240,6 @@ callbacks.Register("CreateMove", function(cmd)
 end)
 
 local t = globals.TickCount()
-client.Command("clear", true)
 local function OnLoad()
     local lines = {"ateris dt bar loaded"}
     local clr1 = {59, 222, 247, 255}
@@ -244,7 +259,3 @@ local function OnLoad()
 end
 callbacks.Unregister( "CreateMove", "awjkudl9i0" )
 callbacks.Register( "CreateMove", "awjkudl9i0", OnLoad )
-
-callbacks.Register("Unload", function()
-    draw.DeleteTexture(gradientBarMask)
-end)
