@@ -8,7 +8,6 @@ local barWidth = 200
 local barWidth2 = 200
 local barHeight = 20
 local maxTicks = 23
-local barOffset = 30
 
 
 local speed = 0.03
@@ -88,17 +87,9 @@ function lerp(a, b, t)
         return 1 - (1 - t) ^ 2
     end
 
-    function easeInQuad(t)
-        return t^2
-    end
-
-    function easeInOutQuad(t)
-        return t < 0.5 and 2 * t * t or 1 - ((-2 * t + 2) ^ 2) / 2
-    end
-
 local screenX, screenY = draw.GetScreenSize()
-local barX = math.floor(screenX / 2 - 160 / 2)
-local barY = math.floor(screenY / 2) + barOffset
+local barX = math.floor(screenX / 2 - 200 / 2)
+local barY = math.floor(screenY / 2) + 50
 
 callbacks.Register("Draw", function()
     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
@@ -106,12 +97,6 @@ callbacks.Register("Draw", function()
     end
 
     local LocalWeapon = entities.GetLocalPlayer():GetPropEntity( "m_hActiveWeapon" )
-    
-    
-    
-
-    
-
 
     local x, y = barX, barY
     local bW, bH = barWidth, barHeight
@@ -141,6 +126,7 @@ callbacks.Register("Draw", function()
     draw.Color(10, 10, 10, 200)
     draw.OutlinedRect(barX - 5, barY - 20, math.floor(barX + barWidth2 + 5), barY + barHeight + 3)
     draw.FilledRect(barX - 5, barY - 20, math.floor(barX + barWidth2 + 5), barY + barHeight + 3)
+    --
 
     local t = easeOutQuad(math.min(barWidth / 160, 1))
 
@@ -172,14 +158,14 @@ callbacks.Register("Draw", function()
     draw.Color(255, 255, 255, 255)
     draw.Text( barX, barY - textHeight - 1, "TICKS: "..warp.GetChargedTicks())
     
-    -- state txt
     draw.SetFont(tickstxt)
     local dtStateText = "";
     local LocalWeapon = entities.GetLocalPlayer():GetPropEntity( "m_hActiveWeapon" )
 
     draw.Color(25, 25, 25, 255)
     draw.OutlinedRect(barX, barY, math.floor(barX + barWidth2), barY + barHeight)
-
+    
+    -- state txt
     if charge == 0 then
         draw.Color(207, 51, 42, 255)
         local dtStateTextWidth, dtStateTextHeight = draw.GetTextSize("LOW CHARGE");
@@ -245,6 +231,7 @@ callbacks.Register("Draw", function()
         draw.OutlinedRect(barX, barY, math.floor(barX + barWidth), barY + barHeight)
        
     end
+    --
 
     local dtStateTextWidth, dtStateTextHeight = draw.GetTextSize(dtStateText);
 
