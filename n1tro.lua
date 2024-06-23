@@ -19,6 +19,8 @@ local menu = {
     buttons = {
         main = false,
         colors = false,
+        misc = false,
+        antiaim = false,
 
         cfg_load = false,
         cfg_save = false,
@@ -27,6 +29,8 @@ local menu = {
     toggles = {
         keybinde_menu = true,
         nitro_dt_bar = true,
+        dyn_switch = false,
+        antieim = true,
 
         aimbot = true,
         crits = true,
@@ -50,9 +54,30 @@ local menu = {
         dtbarcolr2 = 134,
         dtbarcolr3 = 42,
 
+        dtbarcolrtest = 42, 56, 25,
+
         bgcolr = 41,
         bgcolr2 = 42,
         bgcolr3 = 46,
+    },
+
+    misc = { 
+        aspectrat = 0.0,
+        wepnswy = 0,
+
+        xwpn = 0,
+        ywpn = 0,
+        zwpn = 0,
+    },
+
+    antiaim = {
+        aadelay = 1,
+
+        aafek1 = 0,
+        aafek2 = 0,
+
+        aaril1 = 0,
+        aaril2 = 0,
     },
 }
 
@@ -81,6 +106,7 @@ local updateBarCharge = (function()
 
     end
 end)();
+
 
 ---@type lnxLib
 local lnxLib = require("lnxLib")
@@ -120,6 +146,15 @@ local function RoundedRect(x1, y1, x2, y2, r)
 
     draw.FilledRect(x1 + r, y1, x2 - r, y2)
     draw.FilledRect(x1, y1 + r, x2, y2 - r)
+end
+
+
+function interpolateNumber(startValue, endValue, factor)
+    factor = math.sin(factor * math.pi * 2) * 0.5 + 0.5
+    
+    local interpolatedValue = startValue * (1 - factor) + endValue * factor
+    
+    return interpolatedValue
 end
 
 local tahoma = draw.CreateFont( "Tahoma", 12, 400, FONTFLAG_OUTLINE )
@@ -224,14 +259,16 @@ end
 
 local function Slider(x,y,x2,y2, sliderValue ,min,max, name)
     local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
-    local value = menu.colors[sliderValue]
+    local value = menu.colors[sliderValue] or menu.misc[sliderValue] or menu.antiaim[sliderValue]
     if IsMouseInBounds(x,y - 5,x2,y2 + 5) and input.IsButtonDown(MOUSE_LEFT) then 
-        function clamp(value, min, max) -- math.clamp was causing errors :shrug:
+        function clamp(value, min, max)
             return math.max(min, math.min(max, value))
         end
         local percent = clamp((mX - x) / (x2-x), 0, 1)
         local value2 = math.floor((min + (max - min) * percent))
         menu.colors[sliderValue] = value2
+        menu.misc[sliderValue] = value2
+        menu.antiaim[sliderValue] = value2
     end
     draw.Color(40,40,40,255)
     draw.OutlinedRect(x,y,x2,y2)
@@ -248,6 +285,36 @@ local function Slider(x,y,x2,y2, sliderValue ,min,max, name)
     local w,h = draw.GetTextSize( value )
     draw.Text(x2-w, pos[2]-h, value)
     w,h = draw.GetTextSize( name )
+    draw.Text(x, pos[2]-h, name)
+end
+
+local function Slider2(x,y,x2,y2, sliderValue ,min,max, name)
+    local mX, mY = input.GetMousePos()[1], input.GetMousePos()[2]
+    local value = menu.misc[sliderValue] or menu.antiaim[sliderValue]
+    if IsMouseInBounds(x,y - 5,x2,y2 + 5) and input.IsButtonDown(MOUSE_LEFT) then 
+        function clamp(value, min, max)
+            return math.max(min, math.min(max, value))
+        end
+        local percent = clamp((mX - x) / (x2 - x), 0, 1)
+        local value2 = math.floor(((min * 10) + ((max * 10) - (min * 10)) * percent) + 0.5) / 10
+        menu.misc[sliderValue] = value2
+        menu.antiaim[sliderValue] = value2
+    end
+    draw.Color(40,40,40,255)
+    draw.OutlinedRect(x,y,x2,y2)
+    draw.Color(10,10,10,50)
+    draw.FilledRect(x,y,x2,y2)
+    local r,g,b = 53,126,53
+    draw.Color(r,g,b,40)
+    local sliderWidth = math.floor((x2 - x) * (value - min) / (max - min))
+    local pos = {x, y, x + sliderWidth, y2}
+    draw.FilledRect(table.unpack(pos))
+    draw.Color(r,g,b,255)
+    draw.OutlinedRect(table.unpack(pos))
+    draw.Color(255,255,255,255)
+    local w,h = draw.GetTextSize(value)
+    draw.Text(x2-w, pos[2]-h, value)
+    w,h = draw.GetTextSize(name)
     draw.Text(x, pos[2]-h, name)
 end
 
@@ -294,6 +361,9 @@ local function toggleMenu()
     end
 end
 
+local x5, y5 = menu.x, menu.y
+local bW, bH = menu.w, menu.h
+
 local IsDragging = false
 local IsDragging2 = false
 local IsDragging3 = false
@@ -304,9 +374,14 @@ local minTicks = 1
 local maxTicks = 23
 local barOffset = 45
 
+local startTime = os.clock()
+
+
 local buttons = {
     [1] = {name="Main", table="main"},
     [2] = {name="Colors", table="colors"},
+    [3] = {name="Misc", table="misc"},
+    [4] = {name="Anti-Aim", table="antiaim"},
 }
 
 local function DrawMenu()
@@ -401,11 +476,23 @@ local function DrawMenu()
         menu.tabs.tab_4=false
     end
 
+    if menu.buttons.misc then 
+        menu.tabs.tab_1=false
+        menu.tabs.tab_2=false
+        menu.tabs.tab_3=true
+        menu.tabs.tab_4=false
+    end
+
+    if menu.buttons.antiaim then 
+        menu.tabs.tab_1=false
+        menu.tabs.tab_2=false
+        menu.tabs.tab_3=false
+        menu.tabs.tab_4=true
+    end
+
     draw.Color(45, 45, 45, 255)
     draw.Line(x+90,y+1, x+90, y+bH-1)
 
-    draw.Color(200, 200, 200, 50)
-    draw.Text(x+5, y+bH-35, "Config")
     CFGbutton(x+5, y+bH-20,x+46, y+bH-5,"Load", "cfg_load")
     CFGbutton(x+48, y+bH-20,x+87, y+bH-5,"Save", "cfg_save")
     x = x + 90
@@ -417,9 +504,6 @@ local function DrawMenu()
         Island(x1,y1,x1+150,y1+130,"Features")
         Toggle(x1+5, y1+5,"Nitro Keybinds", "keybinde_menu")
         Toggle(x1+5, y1+35,"Nitro DT Bar", "nitro_dt_bar")
-
-        
-        
 
     end
 
@@ -445,6 +529,44 @@ local function DrawMenu()
 
         
     end
+
+    if menu.tabs.tab_3 then
+        menu.w = 450
+        menu.h = 185
+        local x1,y1 = x+5, y+20
+
+        Island(x1 + 5,y1,x1+150,y1+45,"Aspect Ratio")
+        Slider2(x1+10,y1+25,x1+140,y1+35, "aspectrat" ,0,2, "")
+
+        Island(x1+175,y1,x1+320,y1+45,"Weapon Sway")
+        Slider(x1+180,y1+25,x1+310,y1+35, "wepnswy" ,0,100, "")
+
+        Island(x1+85,y1+65,x1+250,y1+160,"Viewmodel Position")
+        Slider2(x1+90,y1+85,x1+240,y1+95, "xwpn" ,-50,50, "X")
+        Slider2(x1+90,y1+115,x1+240,y1+125, "ywpn" ,-50,50, "Y")
+        Slider2(x1+90,y1+145,x1+240,y1+155, "zwpn" ,-50,50, "Z")
+        
+    end
+
+    if menu.tabs.tab_4 then
+        menu.w = 425
+        menu.h = 175
+        local x1,y1 = x+5, y+20
+
+        Island(x1+85,y1,x1+225,y1+55,"Main")
+        Toggle(x1+90,y1+5,"Enable AA", "antieim")
+        Slider2(x1+90,y1+42,x1+220,y1+52, "aadelay" ,.5,10, "Delay")
+
+        Island(x1+5,y1+75,x1+150,y1+145,"Real AA")
+        Slider(x1+10,y1+95,x1+140,y1+105, "aaril1" ,-360,360, "Real Angle 1")
+        Slider(x1+10,y1+125,x1+140,y1+135, "aaril2" ,-360,360, "Real Angle 2")
+
+        Island(x1+170,y1+75,x1+315,y1+145,"Fake AA")
+        Slider(x1+175,y1+95,x1+305,y1+105, "aafek1" ,-360,360, "Fake Angle 1")
+        Slider(x1+175,y1+125,x1+305,y1+135, "aafek2" ,-360,360, "Fake Angle 2")
+        
+    end
+
 end
 callbacks.Unregister( "Draw", "awftgybhdunjmiko")
 callbacks.Register( "Draw", "awftgybhdunjmiko", DrawMenu )
@@ -502,7 +624,9 @@ local function LoadCFG(folder_name)
     end
 end
 
-
+local delays = {
+    dyn_wait = 0,
+}
 
 local logs = {}
 
@@ -590,13 +714,13 @@ local function NonMenuDraw()
     
 
     if menu.buttons.cfg_save then 
-        CreateCFG([[nitrolua]], menu)
+        CreateCFG([[n1tro]], menu)
         table.insert(notifications, 1, {time = globals.CurTime(), text = "saved cfg"})
     end
     
 
     if menu.buttons.cfg_load then 
-        menu = LoadCFG([[nitrolua]])
+        menu = LoadCFG([[n1tro]])
         table.insert(notifications, 1, {time = globals.CurTime(), text = "loaded cfg"})
     end
 
@@ -604,8 +728,47 @@ local function NonMenuDraw()
 
     local keybindHeight = height
     local keybindWidth = width
-
+    local vmstr = menu.misc.xwpn .. " " .. menu.misc.ywpn .. " " .. menu.misc.zwpn
+    local vmswy = (menu.misc.wepnswy / 100)
+    local aspct = (menu.misc.aspectrat - .01)
     
+    local period = menu.antiaim.aadelay
+    local elapsedTime = os.clock() - startTime
+    local factor = (elapsedTime % period) / period
+
+    local startValue1 = menu.antiaim.aaril1
+    local endValue1 = menu.antiaim.aaril2
+    local interpnum1 = interpolateNumber(startValue1, endValue1, factor)
+    interpnum1 = math.floor(interpnum1 + 1)
+
+    local startValue2 = menu.antiaim.aafek1
+    local endValue2 = menu.antiaim.aafek2
+    local interpnum2 = interpolateNumber(startValue2, endValue2, factor)
+    interpnum2 = math.floor(interpnum2 + 1)
+    
+
+
+
+    if (client.GetConVar("tf_viewmodels_offset_override") ~= vmstr) then client.SetConVar( "tf_viewmodels_offset_override",vmstr) end
+
+    if (client.GetConVar("cl_wpn_sway_interp") ~= vmswy) then client.SetConVar( "cl_wpn_sway_interp",vmswy) end
+
+    if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
+
+    if gui.GetValue( "Anti Aim" ) == 1 then
+        if menu.toggles.antieim then
+            if (globals.RealTime() > (delays.dyn_wait + menu.antiaim.aadelay / 1000)) then 
+                menu.toggles.dyn_switch = not menu.toggles.dyn_switch
+                delays.dyn_wait = globals.RealTime()
+            end
+    
+            if menu.toggles.dyn_switch then
+                gui.SetValue("Anti aim - custom yaw (real)", interpnum1)
+                gui.SetValue("Anti aim - custom yaw (fake)", interpnum2)
+            end
+        end
+    
+    end
 
     if menu.toggles.keybinde_menu then
 
@@ -1589,7 +1752,7 @@ local function NonMenuDraw()
             if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                 return
             end
-
+ 
 
         
             if Lbox_Menu_Open == true then
@@ -1664,17 +1827,19 @@ end
     
 
 
-   
-
     ::continue::
 
     
 end
 callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
 
-
 -- pasted by boghonorojczyzna_
 
+local function OnUnload() 
+    client.SetConVar( "tf_viewmodels_offset_override", 0 .. " " .. 0 .. " " .. 0 )
+    client.SetConVar( "cl_wpn_sway_interp", 0.0 )
+    client.SetConVar( "r_aspectratio", 0.0 )
+end
 
 
 local t = globals.TickCount()
@@ -1699,9 +1864,13 @@ end
 callbacks.Unregister( "CreateMove", "awjkudl9i0" )
 callbacks.Register( "CreateMove", "awjkudl9i0", OnLoad )
 
+callbacks.Unregister( "Unload", "gehdas5" )
+callbacks.Register( "Unload", "gehdas5", OnUnload )
+
 callbacks.Register("CreateMove", function(cmd)
     updateBarCharge()
 end)
+
 
 
 table.insert(notifications, 1, {time = globals.CurTime(), text = "loaded pasted lua"})
