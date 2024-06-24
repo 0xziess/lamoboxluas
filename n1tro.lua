@@ -42,6 +42,9 @@ local menu = {
         triggerbt = true,
         triggersht = true,
 
+        rage_aa = false,
+        legit_aa = false,
+
     },
 
     colors = { 
@@ -78,6 +81,8 @@ local menu = {
 
         aaril1 = 0,
         aaril2 = 0,
+
+        aaligit = 1,
     },
 }
 
@@ -190,6 +195,12 @@ local function Toggle(x, y, name, toggle_bool)
         if currentTime - (Toggles[toggle_bool] or 0) >= 0.1 then
             menu.toggles[toggle_bool] = not menu.toggles[toggle_bool]
             Toggles[toggle_bool] = currentTime
+
+            if toggle_bool == "rage_aa" and menu.toggles.rage_aa then
+                menu.toggles.legit_aa = false
+            elseif toggle_bool == "legit_aa" and menu.toggles.legit_aa then
+                menu.toggles.rage_aa = false
+            end
         end
         clr = {65, 65, 65, 50}
     end
@@ -550,21 +561,36 @@ local function DrawMenu()
 
     if menu.tabs.tab_4 then
         menu.w = 425
-        menu.h = 175
+        menu.h = 125
         local x1,y1 = x+5, y+20
 
-        Island(x1+85,y1,x1+225,y1+55,"Main")
-        Toggle(x1+90,y1+5,"Enable AA", "antieim")
-        Slider2(x1+90,y1+42,x1+220,y1+52, "aadelay" ,.5,10, "Delay")
+        Island(x1+10,y1,x1+150,y1+55,"Main")
+        Toggle(x1+15,y1+5,"Enable AA", "antieim")
+        Slider2(x1+15,y1+42,x1+145,y1+52, "aadelay" ,.5,10, "Delay")
 
-        Island(x1+5,y1+75,x1+150,y1+145,"Real AA")
-        Slider(x1+10,y1+95,x1+140,y1+105, "aaril1" ,-360,360, "Real Angle 1")
-        Slider(x1+10,y1+125,x1+140,y1+135, "aaril2" ,-360,360, "Real Angle 2")
+        if menu.toggles.antieim then
+            Island(x1+170,y1,x1+310,y1+55,"Type AA")
+            Toggle(x1+175,y1+5,"Rage AA", "rage_aa")
+            Toggle(x1+175,y1+29,"Legit AA", "legit_aa")
 
-        Island(x1+170,y1+75,x1+315,y1+145,"Fake AA")
-        Slider(x1+175,y1+95,x1+305,y1+105, "aafek1" ,-360,360, "Fake Angle 1")
-        Slider(x1+175,y1+125,x1+305,y1+135, "aafek2" ,-360,360, "Fake Angle 2")
+            if menu.toggles.rage_aa then
+                menu.h = 175
+                Island(x1+5,y1+75,x1+150,y1+145,"Real AA")
+                Slider(x1+10,y1+95,x1+140,y1+105, "aaril1" ,-360,360, "Real Angle 1")
+                Slider(x1+10,y1+125,x1+140,y1+135, "aaril2" ,-360,360, "Real Angle 2")
         
+                Island(x1+170,y1+75,x1+315,y1+145,"Fake AA")
+                Slider(x1+175,y1+95,x1+305,y1+105, "aafek1" ,-360,360, "Fake Angle 1")
+                Slider(x1+175,y1+125,x1+305,y1+135, "aafek2" ,-360,360, "Fake Angle 2")
+            end
+
+            if menu.toggles.legit_aa then
+                menu.h = 150
+                Island(x1+85,y1+75,x1+205,y1+120,"Legit AA")
+                Slider(x1+90,y1+95,x1+200,y1+110, "aaligit" ,-180,180, "Real Angle")
+            end
+        end
+   
     end
 
 end
@@ -747,8 +773,6 @@ local function NonMenuDraw()
     interpnum2 = math.floor(interpnum2 + 1)
     
 
-
-
     if (client.GetConVar("tf_viewmodels_offset_override") ~= vmstr) then client.SetConVar( "tf_viewmodels_offset_override",vmstr) end
 
     if (client.GetConVar("cl_wpn_sway_interp") ~= vmswy) then client.SetConVar( "cl_wpn_sway_interp",vmswy) end
@@ -756,7 +780,7 @@ local function NonMenuDraw()
     if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
 
     if gui.GetValue( "Anti Aim" ) == 1 then
-        if menu.toggles.antieim then
+        if menu.toggles.antieim and menu.toggles.rage_aa then
             if (globals.RealTime() > (delays.dyn_wait + menu.antiaim.aadelay / 1000)) then 
                 menu.toggles.dyn_switch = not menu.toggles.dyn_switch
                 delays.dyn_wait = globals.RealTime()
@@ -766,6 +790,11 @@ local function NonMenuDraw()
                 gui.SetValue("Anti aim - custom yaw (real)", interpnum1)
                 gui.SetValue("Anti aim - custom yaw (fake)", interpnum2)
             end
+        end
+
+        if menu.toggles.antieim and menu.toggles.legit_aa then
+            gui.SetValue( "Anti aim - custom yaw (fake)", -1 )
+            gui.SetValue( "Anti aim - custom yaw (real)", menu.antiaim.aaligit)
         end
     
     end
