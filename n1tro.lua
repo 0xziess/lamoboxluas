@@ -45,6 +45,17 @@ local menu = {
         rage_aa = false,
         legit_aa = false,
 
+        aa_dynrotril = false,
+        aa_rotril = false,
+        aa_spinril = false,
+
+        aa_dynrotfek = false,
+        aa_rotfek = false,
+        aa_spinfek = false,
+
+        invert1 = false,
+        invert2 = false,
+
     },
 
     colors = { 
@@ -78,6 +89,11 @@ local menu = {
 
         aafek1 = 0,
         aafek2 = 0,
+
+        aaril = 0,
+        aafek = 0,
+        aaspinril = 1,
+        aaspinfek = 1,
 
         aaril1 = 0,
         aaril2 = 0,
@@ -200,6 +216,28 @@ local function Toggle(x, y, name, toggle_bool)
                 menu.toggles.legit_aa = false
             elseif toggle_bool == "legit_aa" and menu.toggles.legit_aa then
                 menu.toggles.rage_aa = false
+            end
+
+            if toggle_bool == "aa_dynrotril" and menu.toggles.aa_dynrotril then
+                menu.toggles.aa_rotril = false
+                menu.toggles.aa_spinril = false
+            elseif toggle_bool == "aa_rotril" and menu.toggles.aa_rotril  then
+                menu.toggles.aa_dynrotril = false
+                menu.toggles.aa_spinril = false
+            elseif toggle_bool == "aa_spinril" and menu.toggles.aa_spinril then
+                menu.toggles.aa_dynrotril = false
+                menu.toggles.aa_rotril = false
+            end
+
+            if toggle_bool == "aa_dynrotfek" and menu.toggles.aa_dynrotfek then
+                menu.toggles.aa_rotfek = false
+                menu.toggles.aa_spinfek = false
+            elseif toggle_bool == "aa_rotfek" and menu.toggles.aa_rotfek  then
+                menu.toggles.aa_dynrotfek = false
+                menu.toggles.aa_spinfek = false
+            elseif toggle_bool == "aa_spinfek" and menu.toggles.aa_spinfek then
+                menu.toggles.aa_dynrotfek = false
+                menu.toggles.aa_rotfek = false
             end
         end
         clr = {65, 65, 65, 50}
@@ -358,6 +396,15 @@ local function NotificationBox(x,y,string,alphaProcent)
     draw.OutlinedRect(x-padding, y-padding, x+w+padding,y+h+padding)
     draw.Color(255,255,255,f(255*alphaProcent))
     draw.Text(x,y,string)
+end
+
+local function a(x)
+    if x >= 180 then
+        x = -180
+    elseif x <= -180 then
+        x = 180
+    end
+    return x
 end
 
 local notifications = {} 
@@ -560,13 +607,14 @@ local function DrawMenu()
     end
 
     if menu.tabs.tab_4 then
-        menu.w = 425
+        menu.w = 415
         menu.h = 125
         local x1,y1 = x+5, y+20
+        local mk1 = 10
 
-        Island(x1+10,y1,x1+150,y1+55,"Main")
-        Toggle(x1+15,y1+5,"Enable AA", "antieim")
-        Slider2(x1+15,y1+42,x1+145,y1+52, "aadelay" ,.5,10, "Delay")
+        Island(x1+mk1,y1,x1+mk1+140,y1+55,"Main")
+        Toggle(x1+mk1+5,y1+5,"Enable AA", "antieim")
+        Slider2(x1+mk1+5,y1+42,x1+mk1+135,y1+52, "aadelay" ,.2,10, "Delay")
 
         if menu.toggles.antieim then
             Island(x1+170,y1,x1+310,y1+55,"Type AA")
@@ -574,21 +622,57 @@ local function DrawMenu()
             Toggle(x1+175,y1+29,"Legit AA", "legit_aa")
 
             if menu.toggles.rage_aa then
-                menu.h = 175
-                Island(x1+5,y1+75,x1+150,y1+145,"Real AA")
-                Slider(x1+10,y1+95,x1+140,y1+105, "aaril1" ,-360,360, "Real Angle 1")
-                Slider(x1+10,y1+125,x1+140,y1+135, "aaril2" ,-360,360, "Real Angle 2")
-        
-                Island(x1+170,y1+75,x1+315,y1+145,"Fake AA")
-                Slider(x1+175,y1+95,x1+305,y1+105, "aafek1" ,-360,360, "Fake Angle 1")
-                Slider(x1+175,y1+125,x1+305,y1+135, "aafek2" ,-360,360, "Fake Angle 2")
-            end
+                menu.h = 275
+                Island(x1+5,y1+75,x1+150,y1+155,"Real AA Method")
+                Toggle(x1+mk1+5,y1+80,"Rotate", "aa_rotril")
+                Toggle(x1+mk1+5,y1+105,"Rotate Dynamic", "aa_dynrotril")
+                Toggle(x1+mk1+5,y1+130,"Spin", "aa_spinril")
 
-            if menu.toggles.legit_aa then
+                Island(x1+170,y1+75,x1+315,y1+155,"Fake AA Method")
+                Toggle(x1+mk1+170,y1+80,"Rotate", "aa_rotfek")
+                Toggle(x1+mk1+170,y1+105,"Rotate Dynamic", "aa_dynrotfek")
+                Toggle(x1+mk1+170,y1+130,"Spin", "aa_spinfek")
+
+                if menu.toggles.aa_dynrotril then
+                Island(x1+5,y1+180,x1+150,y1+250,"Real AA")
+                Slider(x1+10,y1+200,x1+140,y1+210, "aaril1" ,-360,360, "Real Angle 1")
+                Slider(x1+10,y1+230,x1+140,y1+240, "aaril2" ,-360,360, "Real Angle 2")
+                end
+
+                if menu.toggles.aa_dynrotfek then
+                Island(x1+170,y1+180,x1+315,y1+250,"Fake AA")
+                Slider(x1+175,y1+200,x1+305,y1+210, "aafek1" ,-360,360, "Fake Angle 1")
+                Slider(x1+175,y1+230,x1+305,y1+240, "aafek2" ,-360,360, "Fake Angle 2")
+                end
+
+                if menu.toggles.aa_rotril then
+                Island(x1+5,y1+180,x1+150,y1+250,"Real AA")
+                Slider(x1+10,y1+200,x1+140,y1+210, "aaril" ,-180,180, "Real Angle")
+                end
+
+                if menu.toggles.aa_rotfek then
+                Island(x1+170,y1+180,x1+315,y1+250,"Fake AA")
+                Slider(x1+175,y1+200,x1+305,y1+210, "aafek" ,-180,180, "Fake Angle")
+                end
+                
+                if menu.toggles.aa_spinril then
+                Island(x1+5,y1+180,x1+150,y1+250,"Real AA")
+                Slider(x1+10,y1+200,x1+140,y1+210, "aaspinril" ,1,10, "Spin Speed")
+                Toggle(x1+10,y1+220,"Inverted", "invert1")
+                end
+
+                if menu.toggles.aa_spinfek then
+                Island(x1+170,y1+180,x1+315,y1+250,"Fake AA")
+                Slider(x1+175,y1+200,x1+305,y1+210, "aaspinfek" ,1,10, "Spin Speed")
+                Toggle(x1+175,y1+220,"Inverted", "invert2")
+                end
+
+            elseif menu.toggles.legit_aa then
                 menu.h = 150
                 Island(x1+85,y1+75,x1+205,y1+120,"Legit AA")
                 Slider(x1+90,y1+95,x1+200,y1+110, "aaligit" ,-180,180, "Real Angle")
             end
+
         end
    
     end
@@ -779,21 +863,64 @@ local function NonMenuDraw()
 
     if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
 
+    if menu.toggles.antieim then
+    gui.SetValue( "anti aim - yaw (real)", "custom" )
+    gui.SetValue( "anti aim - yaw (fake)", "custom" )
+    end
+
     if gui.GetValue( "Anti Aim" ) == 1 then
         if menu.toggles.antieim and menu.toggles.rage_aa then
-            if (globals.RealTime() > (delays.dyn_wait + menu.antiaim.aadelay / 1000)) then 
-                menu.toggles.dyn_switch = not menu.toggles.dyn_switch
-                delays.dyn_wait = globals.RealTime()
+            if menu.toggles.aa_dynrotril then
+                if (globals.RealTime() > (delays.dyn_wait + menu.antiaim.aadelay / 1000)) then 
+                    menu.toggles.dyn_switch = not menu.toggles.dyn_switch
+                    delays.dyn_wait = globals.RealTime()
+                end
+        
+                if menu.toggles.dyn_switch then
+                    gui.SetValue("Anti aim - custom yaw (real)", interpnum1)
+                end
             end
     
-            if menu.toggles.dyn_switch then
-                gui.SetValue("Anti aim - custom yaw (real)", interpnum1)
-                gui.SetValue("Anti aim - custom yaw (fake)", interpnum2)
+            if menu.toggles.aa_dynrotfek then
+                if (globals.RealTime() > (delays.dyn_wait + menu.antiaim.aadelay / 1000)) then 
+                    menu.toggles.dyn_switch = not menu.toggles.dyn_switch
+                    delays.dyn_wait = globals.RealTime()
+                end
+        
+                if menu.toggles.dyn_switch then
+                    gui.SetValue("Anti aim - custom yaw (fake)", interpnum2)
+                end
+            end
+    
+            if menu.toggles.aa_rotril then
+                local val = menu.antiaim.aaril
+                gui.SetValue("Anti aim - custom yaw (real)", val)
+            end
+    
+            if menu.toggles.aa_rotfek then
+                local val = menu.antiaim.aafek
+                gui.SetValue("Anti aim - custom yaw (fake)", val)
+            end
+    
+            if menu.toggles.aa_spinril then
+                local val1 = menu.antiaim.aaspinril
+                if menu.toggles.invert1 then
+                    val1 = -val1
+                end
+                gui.SetValue( "Anti Aim - custom Yaw (real)", a(gui.GetValue( "Anti Aim - custom Yaw (real)" ) + val1))
+            end
+
+            if menu.toggles.aa_spinfek then
+                local val2 = menu.antiaim.aaspinfek
+                if menu.toggles.invert2 then
+                    val2 = -val2
+                end
+                gui.SetValue( "Anti Aim - custom Yaw (fake)", a(gui.GetValue( "Anti Aim - custom Yaw (fake)" ) + val2))
             end
         end
 
         if menu.toggles.antieim and menu.toggles.legit_aa then
-            gui.SetValue( "Anti aim - custom yaw (fake)", -1 )
+            gui.SetValue( "Anti aim - custom yaw (fake)", 1 )
             gui.SetValue( "Anti aim - custom yaw (real)", menu.antiaim.aaligit)
         end
     
@@ -902,11 +1029,7 @@ local function NonMenuDraw()
                     Toggle2(320 + x1, y2 + 173,"", "fakeleg")
                     Toggle2(320 + x1, y2 + 198,"", "triggerbt")
                     Toggle2(320 + x1, y2 + 223,"", "triggersht")
-                    Toggle2(320 + x1, y2 + 248,"", "werp")
-
-                    
-
-                    
+                    Toggle2(320 + x1, y2 + 248,"", "werp")           
 
                 else
                 end 
@@ -917,16 +1040,10 @@ local function NonMenuDraw()
 
             if Lbox_Menu_Open == true then
                 
-               
-
-            
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
                     draw.SetFont(binds)
-        
-                    
-                    
                     
                     if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
@@ -993,12 +1110,6 @@ local function NonMenuDraw()
                           draw.Text( 270 + x1, y2 + 50, "Off" )
                       end
         
-                   
-        
-               
-        
-                
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1028,14 +1139,6 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, y2 + 75, "Off" )
                       end
                 
-        
-                
-        
-        
-               
-        
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1088,12 +1191,6 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, y2 + 100, "Off" )
                       end
         
-                      
-                
-                
-        
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1122,13 +1219,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "Off" )
                       end
-        
-                      
-                
-                
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1165,14 +1256,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "Off" )
                       end
-        
-                      
-                
-        
-                
-        
-                    
-        
+   
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1210,13 +1294,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
                         draw.Text( 270 + x1, 175 + y2, fakelagms )
                     end
-                      
                 
-
-                
-        
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1247,13 +1325,6 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 200 + y2, "Hold" )
                         draw.Text( 270 + x1, 200 + y2, "Off" )
                     end
-
-                      
-                
-
-               
-        
-                    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1453,9 +1524,7 @@ local function NonMenuDraw()
         
         
                 if menu.toggles.dtky then
-        
-                    
-        
+    
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1515,8 +1584,6 @@ local function NonMenuDraw()
         
                 if menu.toggles.rechrge then
         
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1552,9 +1619,7 @@ local function NonMenuDraw()
                 end
         
                 if menu.toggles.thrdperson then
-        
-                    
-        
+ 
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1597,9 +1662,7 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
         
-                if menu.toggles.fakeleg then
-        
-                    
+                if menu.toggles.fakeleg then 
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1643,9 +1706,7 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
 
-                if menu.toggles.triggerbt then
-        
-                    
+                if menu.toggles.triggerbt then    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1683,9 +1744,7 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
 
-                if menu.toggles.triggersht then
-        
-                    
+                if menu.toggles.triggersht then 
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1732,8 +1791,6 @@ local function NonMenuDraw()
 
                 if menu.toggles.werp then
         
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1772,11 +1829,7 @@ local function NonMenuDraw()
 
     end
 
-    if menu.toggles.nitro_dt_bar then
-
-        
-        
-        
+    if menu.toggles.nitro_dt_bar then 
         
             if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                 return
@@ -1828,7 +1881,6 @@ local function NonMenuDraw()
             draw.SetFont(nitrofont)
             local LocalWeapon = entities.GetLocalPlayer():GetPropEntity( "m_hActiveWeapon" )
             if (warp.CanDoubleTap(LocalWeapon)) and ((entities.GetLocalPlayer():GetPropInt( "m_fFlags" )) & FL_ONGROUND) == 1 and charge == 1 then
-                --draw.Text( 1000, 500, warp.GetChargedTicks().."/23")
             else
                 local state_text = "Not Ready";
                 draw.Color(255, 255, 255, 255)
@@ -1844,13 +1896,7 @@ local function NonMenuDraw()
         
                 local StateTextWidth, StateTextHeight = draw.GetTextSize(ticks);
         
-                draw.Text( barX + barWidth - StateTextWidth - 18, barY - StateTextHeight - 2, ticks)
-                
-
-              
-            
-        
-            
+                draw.Text( barX + barWidth - StateTextWidth - 18, barY - StateTextHeight - 2, ticks)       
 
 end
     
@@ -1869,30 +1915,7 @@ local function OnUnload()
     client.SetConVar( "cl_wpn_sway_interp", 0.0 )
     client.SetConVar( "r_aspectratio", 0.0 )
 end
-
-
-local t = globals.TickCount()
 client.Command("clear", true)
-local function OnLoad()
-    local lines = {"nitro and lmaobox collab"}
-    local clr1 = {166, 235, 40}
-    local clr2 = {40, 235, 89}
-    if t < globals.TickCount() + 1 then
-        for i = 1, #lines do
-            local t = i / #lines
-            local clr = {
-                math.floor(clr1[1] + (clr2[1] - clr1[1]) * t),
-                math.floor(clr1[2] + (clr2[2] - clr1[2]) * t),
-                math.floor(clr1[3] + (clr2[3] - clr1[3]) * t)
-            }
-            printc(clr[1], clr[2], clr[3], 255, lines[i])
-        end
-        callbacks.Unregister( "CreateMove", "awjkudl9i0" )
-    end
-end
-callbacks.Unregister( "CreateMove", "awjkudl9i0" )
-callbacks.Register( "CreateMove", "awjkudl9i0", OnLoad )
-
 callbacks.Unregister( "Unload", "gehdas5" )
 callbacks.Register( "Unload", "gehdas5", OnUnload )
 
