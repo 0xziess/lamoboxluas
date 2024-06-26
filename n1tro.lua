@@ -859,7 +859,7 @@ local function NonMenuDraw()
 
     if (client.GetConVar("tf_viewmodels_offset_override") ~= vmstr) then client.SetConVar( "tf_viewmodels_offset_override",vmstr) end
 
-    if (client.GetConVar("cl_wpn_sway_interp") ~= vmswy) then client.SetConVar( "cl_wpn_sway_interp",vmswy) end
+    if (client.GetConVar("cl_wpn_sway_scale") ~= vmswy) then client.SetConVar( "cl_wpn_sway_scale",vmswy) end
 
     if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
 
@@ -1912,7 +1912,7 @@ callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
 
 local function OnUnload() 
     client.SetConVar( "tf_viewmodels_offset_override", 0 .. " " .. 0 .. " " .. 0 )
-    client.SetConVar( "cl_wpn_sway_interp", 0.0 )
+    client.SetConVar( "cl_wpn_sway_scale", 0.0 )
     client.SetConVar( "r_aspectratio", 0.0 )
 end
 client.Command("clear", true)
