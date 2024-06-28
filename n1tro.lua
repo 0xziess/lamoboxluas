@@ -77,7 +77,8 @@ local menu = {
 
     misc = { 
         aspectrat = 0.0,
-        wepnswy = 0,
+        wepnswyinterp = 0,
+        wepnswyscale = 0,
 
         xwpn = 0,
         ywpn = 0,
@@ -593,16 +594,17 @@ local function DrawMenu()
         menu.h = 185
         local x1,y1 = x+5, y+20
 
-        Island(x1 + 5,y1,x1+150,y1+45,"Aspect Ratio")
-        Slider2(x1+10,y1+25,x1+140,y1+35, "aspectrat" ,0,2, "")
+        Island(x1+5,y1,x1+170,y1+45,"Aspect Ratio")
+        Slider2(x1+10,y1+25,x1+160,y1+35, "aspectrat" ,0,2, "")
 
-        Island(x1+175,y1,x1+320,y1+45,"Weapon Sway")
-        Slider(x1+180,y1+25,x1+310,y1+35, "wepnswy" ,0,100, "")
+        Island(x1+175,y1,x1+320,y1+65,"Weapon Sway")
+        Slider(x1+180,y1+15,x1+310,y1+25, "wepnswyinterp" ,0,100, "Interp")
+        Slider(x1+180,y1+45,x1+310,y1+55, "wepnswyscale" ,0,100, "Scale")
 
-        Island(x1+85,y1+65,x1+250,y1+160,"Viewmodel Position")
-        Slider2(x1+90,y1+85,x1+240,y1+95, "xwpn" ,-50,50, "X")
-        Slider2(x1+90,y1+115,x1+240,y1+125, "ywpn" ,-50,50, "Y")
-        Slider2(x1+90,y1+145,x1+240,y1+155, "zwpn" ,-50,50, "Z")
+        Island(x1+5,y1+65,x1+170,y1+160,"Viewmodel Position")
+        Slider2(x1+10,y1+85,x1+160,y1+95, "xwpn" ,-50,50, "X")
+        Slider2(x1+10,y1+115,x1+160,y1+125, "ywpn" ,-50,50, "Y")
+        Slider2(x1+10,y1+145,x1+160,y1+155, "zwpn" ,-50,50, "Z")
         
     end
 
@@ -839,7 +841,8 @@ local function NonMenuDraw()
     local keybindHeight = height
     local keybindWidth = width
     local vmstr = menu.misc.xwpn .. " " .. menu.misc.ywpn .. " " .. menu.misc.zwpn
-    local vmswy = (menu.misc.wepnswy / 100)
+    local vmswyinterp = (menu.misc.wepnswyinterp / 100)
+    local vmswyscale= (menu.misc.wepnswyscale / 10 )
     local aspct = (menu.misc.aspectrat - .01)
     
     local period = menu.antiaim.aadelay
@@ -859,7 +862,9 @@ local function NonMenuDraw()
 
     if (client.GetConVar("tf_viewmodels_offset_override") ~= vmstr) then client.SetConVar( "tf_viewmodels_offset_override",vmstr) end
 
-    if (client.GetConVar("cl_wpn_sway_interp") ~= vmswy) then client.SetConVar( "cl_wpn_sway_interp",vmswy) end
+    if (client.GetConVar("cl_wpn_sway_interp") ~= vmswyinterp ) then client.SetConVar( "cl_wpn_sway_interp",vmswyinterp ) end
+    
+    if (client.GetConVar("cl_wpn_sway_scale") ~= vmswyscale ) and vmswyinterp >= .01 then client.SetConVar( "cl_wpn_sway_scale",vmswyscale) end
 
     if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
 
@@ -1033,24 +1038,15 @@ local function NonMenuDraw()
 
                 else
                 end 
-
-                
-            
                 draw.SetFont(binds)
 
             if Lbox_Menu_Open == true then
                 
-               
-
-            
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
                     draw.SetFont(binds)
-        
-                    
-                    
-                    
+
                     if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 50, "aimbot")
@@ -1115,13 +1111,7 @@ local function NonMenuDraw()
                           draw.Text( 25 + x1, y2 + 50, "Toggle" )
                           draw.Text( 270 + x1, y2 + 50, "Off" )
                       end
-        
-                   
-        
-               
-        
-                
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1150,15 +1140,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, y2 + 75, "Hold" )
                         draw.Text( 270 + x1, y2 + 75, "Off" )
                       end
-                
-        
-                
-        
-        
-               
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1210,13 +1192,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, y2 + 100, "Hold" )
                         draw.Text( 270 + x1, y2 + 100, "Off" )
                       end
-        
-                      
-                
-                
-        
-                    
-        
+            
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1245,13 +1221,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "Off" )
                       end
-        
-                      
-                
-                
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1288,14 +1258,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "Off" )
                       end
-        
-                      
-                
-        
-                
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1334,12 +1297,6 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, 175 + y2, fakelagms )
                     end
                       
-                
-
-                
-        
-                    
-        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1370,14 +1327,7 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 200 + y2, "Hold" )
                         draw.Text( 270 + x1, 200 + y2, "Off" )
                     end
-
-                      
-                
-
-               
-        
-                    
-        
+            
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1416,8 +1366,6 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, 225 + y2, "Off" )
                     end
 
-                      
-                
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1446,10 +1394,6 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, y2 + 250, "Hold" )
                         draw.Text( 270 + x1, y2 + 250, "Off" )
                       end
-
-
-
-
             end
 
             if Lbox_Menu_Open == false then
@@ -1461,10 +1405,7 @@ local function NonMenuDraw()
                         return
                       end
                     draw.SetFont(binds)
-        
-                    
-                    
-                    
+                
                     if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
                         draw.Text( 85 + x1, y2 + 50, "aimbot")
@@ -1529,9 +1470,6 @@ local function NonMenuDraw()
                           draw.Text( 25 + x1, y2 + 50, "Toggle" )
                           draw.Text( 270 + x1, y2 + 50, "Off" )
                       end
-        
-                   
-        
                 else
                     if Lbox_Menu_Open == false then
                         y2 = y2 - 25
@@ -1571,14 +1509,8 @@ local function NonMenuDraw()
                 else
                     y2 = y2 - 25
                 end
-        
-                
-        
-        
                 if menu.toggles.dtky then
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1637,9 +1569,7 @@ local function NonMenuDraw()
                 end
         
                 if menu.toggles.rechrge then
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1668,16 +1598,12 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "Off" )
                       end
-        
-                      
                 else
                     y2 = y2 - 25
                 end
         
                 if menu.toggles.thrdperson then
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1714,16 +1640,12 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "Off" )
                       end
-        
-                      
                 else
                     y2 = y2 - 25
                 end
         
                 if menu.toggles.fakeleg then
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1767,9 +1689,7 @@ local function NonMenuDraw()
                 end
 
                 if menu.toggles.triggerbt then
-        
-                    
-        
+
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1800,16 +1720,12 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 200 + y2, "Hold" )
                         draw.Text( 270 + x1, 200 + y2, "Off" )
                     end
-
-                      
                 else
                     y2 = y2 - 25
                 end
 
                 if menu.toggles.triggersht then
-        
-                    
-        
+                
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1847,16 +1763,12 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 225 + y2, "Hold" )
                         draw.Text( 270 + x1, 225 + y2, "Off" )
                     end
-
-                      
                 else
                     y2 = y2 - 25
                 end
 
                 if menu.toggles.werp then
-        
-                    
-        
+                
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1891,16 +1803,10 @@ local function NonMenuDraw()
                     y2 = y2 - 25  
                 end
             end
-                
-
     end
 
     if menu.toggles.nitro_dt_bar then
 
-        
-        
-        
-        
             if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                 return
             end
@@ -1969,8 +1875,6 @@ local function NonMenuDraw()
                 draw.Text( barX + barWidth - StateTextWidth - 18, barY - StateTextHeight - 2, ticks)       
 
 end
-    
-
 
     ::continue::
 
@@ -1983,6 +1887,7 @@ callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
 local function OnUnload() 
     client.SetConVar( "tf_viewmodels_offset_override", 0 .. " " .. 0 .. " " .. 0 )
     client.SetConVar( "cl_wpn_sway_interp", 0.0 )
+    client.SetConVar( "cl_wpn_sway_scale", 0.0 )
     client.SetConVar( "r_aspectratio", 0.0 )
 end
 
