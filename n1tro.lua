@@ -859,7 +859,7 @@ local function NonMenuDraw()
 
     if (client.GetConVar("tf_viewmodels_offset_override") ~= vmstr) then client.SetConVar( "tf_viewmodels_offset_override",vmstr) end
 
-    if (client.GetConVar("cl_wpn_sway_scale") ~= vmswy) then client.SetConVar( "cl_wpn_sway_scale",vmswy) end
+    if (client.GetConVar("cl_wpn_sway_interp") ~= vmswy) then client.SetConVar( "cl_wpn_sway_interp",vmswy) end
 
     if (client.GetConVar("r_aspectratio") ~= aspct) then client.SetConVar( "r_aspectratio",aspct) end
 
@@ -1040,10 +1040,16 @@ local function NonMenuDraw()
 
             if Lbox_Menu_Open == true then
                 
+               
+
+            
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
                     draw.SetFont(binds)
+        
+                    
+                    
                     
                     if (aimbot_mode == "hold-to-use") and gui.GetValue("aim bot") == 1 and gui.GetValue("Aim key") >= 1 and (input.IsButtonDown( gui.GetValue( "aim key" ) )) then
                         draw.Color( 200, 200, 200, 250 )
@@ -1110,6 +1116,12 @@ local function NonMenuDraw()
                           draw.Text( 270 + x1, y2 + 50, "Off" )
                       end
         
+                   
+        
+               
+        
+                
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1139,6 +1151,14 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, y2 + 75, "Off" )
                       end
                 
+        
+                
+        
+        
+               
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1191,6 +1211,12 @@ local function NonMenuDraw()
                         draw.Text( 270 + x1, y2 + 100, "Off" )
                       end
         
+                      
+                
+                
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1219,7 +1245,13 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 125 + y2, "Hold" )
                         draw.Text( 270 + x1, 125 + y2, "Off" )
                       end
-
+        
+                      
+                
+                
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1256,7 +1288,14 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 150 + y2, "Toggle" )
                         draw.Text( 270 + x1, 150 + y2, "Off" )
                       end
-   
+        
+                      
+                
+        
+                
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1294,7 +1333,13 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 175 + y2, "Toggle" )
                         draw.Text( 270 + x1, 175 + y2, fakelagms )
                     end
+                      
                 
+
+                
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1325,6 +1370,13 @@ local function NonMenuDraw()
                         draw.Text( 25 + x1, 200 + y2, "Hold" )
                         draw.Text( 270 + x1, 200 + y2, "Off" )
                     end
+
+                      
+                
+
+               
+        
+                    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1524,7 +1576,9 @@ local function NonMenuDraw()
         
         
                 if menu.toggles.dtky then
-    
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1584,6 +1638,8 @@ local function NonMenuDraw()
         
                 if menu.toggles.rechrge then
         
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1619,7 +1675,9 @@ local function NonMenuDraw()
                 end
         
                 if menu.toggles.thrdperson then
- 
+        
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1662,7 +1720,9 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
         
-                if menu.toggles.fakeleg then 
+                if menu.toggles.fakeleg then
+        
+                    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1706,7 +1766,9 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
 
-                if menu.toggles.triggerbt then    
+                if menu.toggles.triggerbt then
+        
+                    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1744,7 +1806,9 @@ local function NonMenuDraw()
                     y2 = y2 - 25
                 end
 
-                if menu.toggles.triggersht then 
+                if menu.toggles.triggersht then
+        
+                    
         
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
@@ -1791,6 +1855,8 @@ local function NonMenuDraw()
 
                 if menu.toggles.werp then
         
+                    
+        
                     if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                         return
                       end
@@ -1829,7 +1895,11 @@ local function NonMenuDraw()
 
     end
 
-    if menu.toggles.nitro_dt_bar then 
+    if menu.toggles.nitro_dt_bar then
+
+        
+        
+        
         
             if engine.Con_IsVisible() or engine.IsGameUIVisible() then
                 return
@@ -1912,17 +1982,19 @@ callbacks.Register( "Draw", "awbtyngfuimhdj", NonMenuDraw )
 
 local function OnUnload() 
     client.SetConVar( "tf_viewmodels_offset_override", 0 .. " " .. 0 .. " " .. 0 )
-    client.SetConVar( "cl_wpn_sway_scale", 0.0 )
+    client.SetConVar( "cl_wpn_sway_interp", 0.0 )
     client.SetConVar( "r_aspectratio", 0.0 )
 end
+
+
+local t = globals.TickCount()
 client.Command("clear", true)
+
 callbacks.Unregister( "Unload", "gehdas5" )
 callbacks.Register( "Unload", "gehdas5", OnUnload )
 
 callbacks.Register("CreateMove", function(cmd)
     updateBarCharge()
 end)
-
-
 
 table.insert(notifications, 1, {time = globals.CurTime(), text = "loaded pasted lua"})
